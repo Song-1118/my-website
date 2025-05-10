@@ -4,8 +4,20 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
+  
   "compilerOptions": {
     "lib": ["es2017", "dom"],
-    // 其他配置...
-  }
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "types": ["vite/client", "vue"]
+  },
+  "include": ["src/**/*"]
+
 }
