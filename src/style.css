@@ -1,0 +1,25 @@
+/* style.css */
+:root {
+  --bg-gradient-light: linear-gradient(135deg, #a8c0ff, #764ba2);
+  --text-color: #fff;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-gradient-light);
+  color: var(--text-color);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 新增：卡片和问题样式 */
+.card, .question {
+  background-color: var(--bg-gradient-light);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
