@@ -95,7 +95,7 @@ const downloads = ref([
             win32: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/WeChatWin_W.exe',
             android: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/Wechatwin_a.apk'
         },
-        icon: 'src/icons/wechat.png' // 可选图标路径
+        icon: 'icons/wechat.png' // 可选图标路径
     },
     {
         title: '项目模板包',
