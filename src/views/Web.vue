@@ -32,15 +32,15 @@ const cards = [
     {
         title: '极光栈主站',
         description: '极光栈工作室主站',
-        link: 'http://songziming.dpdns.org',
+        link: 'http://songweb.dpdns.org',
         linkText: '主站',
         isVisible: false
     },
     {
-        title: '博客',
-        description: '极光栈博客。',
-        link: 'https://blog.songziming.com',
-        linkText: '博客',
+        title: '宋氏集团',
+        description: '宋氏集团官网',
+        link: 'https://songziming.com',
+        linkText: '宋氏集团',
         isVisible: false
     },
     {
