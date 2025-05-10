@@ -39,7 +39,7 @@ const cards = [
     {
         title: '宋氏集团',
         description: '宋氏集团官网',
-        link: 'https://songziming.com',
+        link: 'https://songziming.dpdns.org',
         linkText: '宋氏集团',
         isVisible: false
     },
