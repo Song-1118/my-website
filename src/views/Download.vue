@@ -25,7 +25,7 @@
     </div>
 
     <!-- 版本选择弹窗 -->
-    <el-dialog v-model="dialogVisible" title="选择版本" :width="isMobile ? '80%' : '30%'">
+    <el-dialog v-model="dialogVisible" title="选择版本" :width="isMobile ? '30%' : '30%'">
         <el-radio-group v-model="selectedVersion">
             <el-radio v-for="(url, version) in currentVersions" :key="version" :label="version">{{
                 formatVersionName(version) }}</el-radio>
@@ -95,7 +95,7 @@ const downloads = ref([
             win32: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/WeChatWin_W.exe',
             android: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/Wechatwin_a.apk'
         },
-        icon: 'icons/wechat.png' // 可选图标路径
+        icon: '/icons/wechat.png' // 修改为绝对路径
     },
     {
         title: '项目模板包',
@@ -104,7 +104,7 @@ const downloads = ref([
             win32: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/WeChatWin_W.exe',
             android: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/Wechatwin_a.apk'
         },
-        icon: '/icons/template.png'
+        icon: '/icons/template.png' // 修改为绝对路径
     }
 ]);
 
