@@ -1,8 +1,8 @@
 <template>
   <div class="home-container">
     <div class="content animated fadeInUp">
-      <h1 class="title">欢迎来到我的主页</h1>
-      <p class="subtitle">这里展示一些有趣的项目和链接</p>
+      <h1 class="title">极光栈</h1>
+      <p class="subtitle">AuroraHub</p>
     </div>
   </div>
 </template>
