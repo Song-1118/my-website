@@ -1,23 +1,24 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
-  
   "compilerOptions": {
-    "lib": ["es2017", "dom"],
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "moduleResolution": "Node",
     "skipLibCheck": true,
-    "outDir": "./dist",
-    "types": ["vite/client", "vue"]
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib": ["ESNext", "DOM"],
+    "declaration": true, // 启用类型声明文件生成
+    "declarationDir": "./dist/types" // 指定类型声明文件的输出目录
   },
-  "include": ["src/**/*"]
-
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"], // 确保匹配 Vue 和 TypeScript 文件
+  "exclude": ["node_modules", "dist"] // 排除不必要的目录
 }
