@@ -123,16 +123,6 @@ onMounted(() => {
         grid-template-columns: repeat(2, 1fr);
     }
 }
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px); /* 原始位置：下方 */
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0); /* 最终位置：原位 */
-  }
-}
 
 .card {
   box-sizing: border-box;
@@ -140,19 +130,5 @@ onMounted(() => {
   height: auto;
   margin-top: 20px;
   animation: fadeInUp 0.5s ease forwards; /* 修改此处的动画时间 */
-}
-
-/* 为每张卡片添加不同的延迟时间，形成渐显效果 */
-.card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.card:nth-child(2) {
-  animation-delay: 0.3s;
-}
-.card:nth-child(3) {
-  animation-delay: 0.6s;
-}
-.card:nth-child(4) {
-  animation-delay: 0.7s;
 }
 </style>
