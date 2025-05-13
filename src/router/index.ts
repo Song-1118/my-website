@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Download from '../views/Download.vue'
 import Web from '../views/Web.vue'
+import Error404 from "../views/Error404.vue";
 
 const routes = [
   {
@@ -18,6 +19,13 @@ const routes = [
     path: '/web',
     name: 'Web',
     component: Web
+
+  },
+  {
+    // 404界面捕捉跳转
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    component: Error404
 
   }
 ]
