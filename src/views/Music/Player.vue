@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage,ElNotification } from 'element-plus'
 
 interface Track {
   name: string
@@ -88,6 +88,7 @@ const audioRef = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
 
 onMounted(() => {
+  prompt()
   const src = route.query.src as string | undefined
   if (!src) {
     ElMessage.warning('缺少音源地址')
@@ -114,6 +115,14 @@ const togglePlay = () => {
       playPromise.catch(e => {
         console.error('播放失败:', e)
         ElMessage.error('请先与页面交互后再播放')
+
+        // 播放失败时提示用户尝试缓存
+        ElNotification({
+          title: '播放提示',
+          message: '播放失败，可能是网络不稳定，建议点击【一键缓存并播放】以获得更好体验。',
+          type: 'warning',
+          duration: 4000
+        })
       })
     }
   }
@@ -142,6 +151,13 @@ const prevTrack = () => {
   currentTrack.value = tracks[prevIndex]
   isPlaying.value = false
   audioRef.value?.play()
+}
+const prompt = () => {
+  ElNotification({
+    title: '极光栈播放器V1.0',
+    message: '当网络不佳或播放卡顿时，请点击一键缓存并播放按钮，耐心等待缓存时间后，即可流畅播放。',
+    type: 'success'
+  })
 }
 </script>
 
