@@ -14,6 +14,7 @@
         <el-button @click="togglePlay">{{ isPlaying ? '暂停' : '播放' }}</el-button>
         <el-button @click="prevTrack">上一首</el-button>
         <el-button @click="nextTrack">下一首</el-button>
+        <el-button @click="cacheAndPlay">一键缓存并播放</el-button>
         <el-button @click="reloadPage">🔄 重新加载</el-button>
       </div>
 
@@ -34,6 +35,37 @@ interface Track {
   name: string
   src: string
 }
+const isBuffering = ref(false)
+const cacheAndPlay = () => {
+  if (!audioRef.value || !currentTrack.value) return;
+
+  // 设置为缓冲状态
+  isBuffering.value = true;
+  ElMessage.info('开始缓存歌曲...');
+
+  // 监听音频加载完成事件
+  const audio = audioRef.value;
+  audio.load(); // 强制重新加载
+
+  audio.oncanplaythrough = () => {
+    // 缓存完成，可以流畅播放
+    isBuffering.value = false;
+    ElMessage.success('缓存完成，即将播放');
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.error('播放失败:', e);
+        ElMessage.error('请先与页面交互后再播放');
+      });
+    }
+    isPlaying.value = true;
+  };
+
+  audio.onerror = () => {
+    isBuffering.value = false;
+    ElMessage.error('缓存失败，请重试');
+  };
+};
 
 const route = useRoute()
 
