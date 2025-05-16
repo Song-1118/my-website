@@ -7,6 +7,7 @@
     <el-menu-item @click="routerPush('/')" index="1">首页</el-menu-item>
     <el-menu-item @click="routerPush('/download')" index="2">下载</el-menu-item>
     <el-menu-item @click="routerPush('/web')" index="3">网站</el-menu-item>
+    <el-menu-item @click="routerPush('/music')" index="4">音乐</el-menu-item>
   </el-menu>
   <router-view />
 </template>

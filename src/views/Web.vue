@@ -1,15 +1,12 @@
 <template>
     <div class="card-container">
-        <!-- 使用 v-for 遍历 cards 数组 -->
         <el-card v-for="card in cards" :key="card.title" class="card">
-            <!-- 标题 -->
             <template #header>
                 <div class="card-header">
                     <h2>{{ card.title }}</h2>
                 </div>
             </template>
 
-            <!-- 简介 -->
             <p class="card-description">{{ card.description }}</p>
 
             <!-- 页脚：连接 -->

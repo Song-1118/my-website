@@ -8,12 +8,25 @@
   --bg-gradient-dark: linear-gradient(135deg, #1e1e2f, #2c2c4a);
   --text-color: #f5f5f5;
 }
+html {
+  min-height: 100%;
+  position: relative;
+}
 
-html, body {
-  height: 100%;
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: var(--bg-gradient-light);
+}
+
+body {
   margin: 0;
   padding: 0;
-  background: var(--bg-gradient-light);
   color: var(--text-color);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   transition: background 0.3s ease, color 0.3s ease;
