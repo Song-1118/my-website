@@ -10,7 +10,7 @@
     </el-card>
 
     <router-view />
-    <el-dialog v-model="dialogVisible" title="极光栈音乐反馈" width="500" :before-close="handleClose">
+    <el-dialog class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" width="500" :before-close="handleClose">
         <p>姓名：</p>
         <el-input v-model="name" placeholder="你的姓名/可填学号"></el-input>
         <p>歌名：</p>
@@ -96,6 +96,9 @@ const confirm = () => {
 }
 @media (max-width: 768px) {
     .card {
+        width: 80%;
+    }
+    .dialog {
         width: 80%;
     }
 }
