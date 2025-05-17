@@ -26,6 +26,12 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'MusicList'
+}
+</script>
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 import router from '../../router'
@@ -36,6 +42,8 @@ interface MusicItem {
 }
 
 const musicList = ref<MusicItem[]>([
+  { name: '苟活.mp3', src: './musics/苟活.mp3' },
+  { name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
   { name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
   { name: '此去半生.mp3', src: './musics/此去半生.mp3' },
   { name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },

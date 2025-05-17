@@ -29,47 +29,27 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { ElMessage,ElNotification } from 'element-plus'
+import { ElMessage, ElNotification } from 'element-plus'
 
+// 类型定义 -----------------------------------------------
 interface Track {
   name: string
   src: string
 }
-const isBuffering = ref(false)
-const cacheAndPlay = () => {
-  if (!audioRef.value || !currentTrack.value) return;
 
-  // 设置为缓冲状态
-  isBuffering.value = true;
-  ElMessage.info('开始缓存歌曲...');
-
-  // 监听音频加载完成事件
-  const audio = audioRef.value;
-  audio.load(); // 强制重新加载
-
-  audio.oncanplaythrough = () => {
-    // 缓存完成，可以流畅播放
-    isBuffering.value = false;
-    ElMessage.success('缓存完成，即将播放');
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.error('播放失败:', e);
-        ElMessage.error('请先与页面交互后再播放');
-      });
-    }
-    isPlaying.value = true;
-  };
-
-  audio.onerror = () => {
-    isBuffering.value = false;
-    ElMessage.error('缓存失败，请重试');
-  };
-};
-
+// 路由相关 -----------------------------------------------
 const route = useRoute()
 
+// 响应式状态 ---------------------------------------------
+const audioRef = ref<HTMLAudioElement | null>(null)
+const currentTrack = ref<Track | null>(null)
+const isPlaying = ref(false)
+const isBuffering = ref(false)
+
+// 静态数据 -----------------------------------------------
 const tracks: Track[] = [
+  { name: '苟活.mp3', src: './musics/苟活.mp3' },
+  { name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
   { name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
   { name: '此去半生.mp3', src: './musics/此去半生.mp3' },
   { name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },
@@ -83,80 +63,121 @@ const tracks: Track[] = [
   { name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3' }
 ]
 
-const currentTrack = ref<Track | null>(null)
-const audioRef = ref<HTMLAudioElement | null>(null)
-const isPlaying = ref(false)
-
+// 生命周期钩子 -------------------------------------------
 onMounted(() => {
-  prompt()
-  const src = route.query.src as string | undefined
-  if (!src) {
-    ElMessage.warning('缺少音源地址')
-    currentTrack.value = tracks[0]
-  } else {
-    const match = tracks.find(track => track.src === src)
-    if (match) {
-      currentTrack.value = match
-    } else {
-      ElMessage.warning('未找到对应歌曲，已播放默认曲目')
-      currentTrack.value = tracks[0]
-    }
-  }
+  showStartupPrompt()
+  initializeTrack()
 })
 
+// 初始化逻辑 ---------------------------------------------
+const initializeTrack = () => {
+  const src = route.query.src as string | undefined
+  currentTrack.value = src ? findTrack(src) : tracks[0]
+  handleTrackNotFoundWarning(src)
+}
+
+const findTrack = (src: string) => {
+  const match = tracks.find(track => track.src === src)
+  if (!match) ElMessage.warning('未找到对应歌曲，已播放默认曲目')
+  return match || tracks[0]
+}
+
+const handleTrackNotFoundWarning = (src?: string) => {
+  if (!src) ElMessage.warning('缺少音源地址')
+}
+
+// 播放控制 -----------------------------------------------
 const togglePlay = () => {
   if (!audioRef.value) return
 
-  if (isPlaying.value) {
-    audioRef.value.pause()
-  } else {
-    const playPromise = audioRef.value.play()
-    if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.error('播放失败:', e)
-        ElMessage.error('请先与页面交互后再播放')
-
-        // 播放失败时提示用户尝试缓存
-        ElNotification({
-          title: '播放提示',
-          message: '播放失败，可能是网络不稳定，建议点击【一键缓存并播放】以获得更好体验。',
-          type: 'warning',
-          duration: 4000
-        })
-      })
-    }
-  }
-
+  isPlaying.value ? audioRef.value.pause() : attemptPlay()
   isPlaying.value = !isPlaying.value
 }
-const reloadPage = () => {
-  window.location.reload()
+
+const attemptPlay = () => {
+  audioRef.value?.play().catch(e => {
+    console.error('播放失败:', e)
+    ElMessage.error('请先与页面交互后再播放')
+    showCacheRecommendation()
+  })
 }
 
-const nextTrack = () => {
-  const currentIndex = tracks.findIndex(
-    track => track.src === currentTrack.value?.src
-  )
-  const nextIndex = (currentIndex + 1) % tracks.length
-  currentTrack.value = tracks[nextIndex]
+// 曲目导航 -----------------------------------------------
+const nextTrack = () => changeTrack(1)
+const prevTrack = () => changeTrack(-1)
+
+const changeTrack = (direction: number) => {
+  const currentIndex = tracks.findIndex(t => t.src === currentTrack.value?.src)
+  const newIndex = (currentIndex + direction + tracks.length) % tracks.length
+  currentTrack.value = tracks[newIndex]
+  restartPlayback()
+}
+
+const restartPlayback = () => {
   isPlaying.value = false
   audioRef.value?.play()
 }
 
-const prevTrack = () => {
-  const currentIndex = tracks.findIndex(
-    track => track.src === currentTrack.value?.src
-  )
-  const prevIndex = (currentIndex - 1 + tracks.length) % tracks.length
-  currentTrack.value = tracks[prevIndex]
-  isPlaying.value = false
-  audioRef.value?.play()
+// 缓存处理 -----------------------------------------------
+const cacheAndPlay = () => {
+  if (!audioRef.value || !currentTrack.value) return
+
+  // 定义处理函数
+  const handleCacheSuccess = () => {
+    cleanupCacheListeners(audioRef.value!, handleCacheSuccess, handleCacheError)
+    isBuffering.value = false
+    ElMessage.success('缓存完成，即将播放')
+    restartPlayback()
+  }
+
+  const handleCacheError = () => {
+    cleanupCacheListeners(audioRef.value!, handleCacheSuccess, handleCacheError)
+    isBuffering.value = false
+    ElMessage.error('缓存失败，请重试')
+  }
+
+  setupCacheListeners(handleCacheSuccess, handleCacheError)
+  startCachingProcess()
 }
-const prompt = () => {
+
+const setupCacheListeners = (successHandler: () => void, errorHandler: () => void) => {
+  const audio = audioRef.value!
+  audio.addEventListener('canplaythrough', successHandler)
+  audio.addEventListener('error', errorHandler)
+}
+
+const cleanupCacheListeners = (
+  audio: HTMLAudioElement,
+  successHandler: () => void,
+  errorHandler: () => void
+) => {
+  audio.removeEventListener('canplaythrough', successHandler)
+  audio.removeEventListener('error', errorHandler)
+}
+
+const startCachingProcess = () => {
+  isBuffering.value = true
+  ElMessage.info('开始缓存歌曲...')
+  audioRef.value?.load()
+}
+// 辅助功能 -----------------------------------------------
+const showCacheRecommendation = () => {
+  ElNotification({
+    title: '播放提示',
+    message: '建议点击【一键缓存并播放】以获得更好体验',
+    type: 'warning',
+    duration: 4000
+  })
+}
+
+const reloadPage = () => window.location.reload()
+
+const showStartupPrompt = () => {
   ElNotification({
     title: '极光栈播放器V1.0',
-    message: '当网络不佳或播放卡顿时，请点击一键缓存并播放按钮，耐心等待缓存时间后，即可流畅播放。',
-    type: 'success'
+    message: '网络不佳时建议使用一键缓存功能',
+    type: 'success',
+    position: 'bottom-right',
   })
 }
 </script>
