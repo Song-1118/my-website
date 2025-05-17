@@ -9,19 +9,37 @@
       <!-- 音频控件 -->
       <audio class="audio" controls ref="audioRef" :src="currentTrack?.src" />
 
-      <!-- 控制按钮 -->
       <div class="controls">
-        <el-button @click="togglePlay">{{ isPlaying ? '暂停' : '播放' }}</el-button>
-        <el-button @click="prevTrack">上一首</el-button>
-        <el-button @click="nextTrack">下一首</el-button>
-        <el-button @click="cacheAndPlay">一键缓存并播放</el-button>
-        <el-button @click="reloadPage">🔄 重新加载</el-button>
+        <!-- 移动端专用布局 -->
+        <div class="mobile-controls">
+          <el-button @click="togglePlay">{{ isPlaying ? '暂停' : '播放' }}</el-button>
+          <div class="row">
+            <el-button @click="prevTrack">上一首</el-button>
+            <el-button @click="nextTrack">下一首</el-button>
+          </div>
+          <div class="row">
+            <el-button @click="cacheAndPlay">一键缓存并播放</el-button>
+            <el-button @click="reloadPage">🔄 重新加载</el-button>
+          </div>
+        </div>
+
+        <!-- PC 专用布局 -->
+        <div class="desktop-controls">
+          <el-button @click="togglePlay">{{ isPlaying ? '暂停' : '播放' }}</el-button>
+          <el-button @click="prevTrack">上一首</el-button>
+          <el-button @click="nextTrack">下一首</el-button>
+          <el-button @click="cacheAndPlay">一键缓存并播放</el-button>
+          <el-button @click="reloadPage">🔄 重新加载</el-button>
+        </div>
       </div>
 
       <!-- 版本信息，固定在右下角 -->
       <div class="version-info">
         <h2>极光栈播放器V1.0</h2>
       </div>
+      <el-link :href="`/player2?track=${currentTrack?.id}`">
+        跳转到新版播放器
+      </el-link>
     </el-card>
   </div>
 </template>
@@ -35,6 +53,7 @@ import { ElMessage, ElNotification } from 'element-plus'
 interface Track {
   name: string
   src: string
+  id: string
 }
 
 // 路由相关 -----------------------------------------------
@@ -48,19 +67,19 @@ const isBuffering = ref(false)
 
 // 静态数据 -----------------------------------------------
 const tracks: Track[] = [
-  { name: '苟活.mp3', src: './musics/苟活.mp3' },
-  { name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
-  { name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
-  { name: '此去半生.mp3', src: './musics/此去半生.mp3' },
-  { name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },
-  { name: '青花瓷.mp3', src: './musics/青花瓷.mp3' },
-  { name: '耍把戏.mp3', src: './musics/耍把戏.mp3' },
-  { name: '踏山河.mp3', src: './musics/踏山河.mp3' },
-  { name: '跳楼机.mp3', src: './musics/跳楼机.mp3' },
-  { name: '循迹.mp3', src: './musics/循迹.mp3' },
-  { name: 'Lose Control.mp3', src: './musics/Lose Control.mp3' },
-  { name: 'Teeth.mp3', src: './musics/Teeth.mp3' },
-  { name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3' }
+  { id: '001', name: '苟活.mp3', src: './musics/苟活.mp3' },
+  { id: '002', name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
+  { id: '003', name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
+  { id: '004', name: '此去半生.mp3', src: './musics/此去半生.mp3' },
+  { id: '005', name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },
+  { id: '006', name: '青花瓷.mp3', src: './musics/青花瓷.mp3' },
+  { id: '007', name: '耍把戏.mp3', src: './musics/耍把戏.mp3' },
+  { id: '008', name: '踏山河.mp3', src: './musics/踏山河.mp3' },
+  { id: '009', name: '跳楼机.mp3', src: './musics/跳楼机.mp3' },
+  { id: '010', name: '循迹.mp3', src: './musics/循迹.mp3' },
+  { id: '011', name: 'Lose Control.mp3', src: './musics/Lose Control.mp3' },
+  { id: '012', name: 'Teeth.mp3', src: './musics/Teeth.mp3' },
+  { id: '013', name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3' }
 ]
 
 // 生命周期钩子 -------------------------------------------
@@ -195,7 +214,8 @@ const showStartupPrompt = () => {
   max-width: 600px;
   padding: 20px;
   text-align: center;
-  position: relative; /* 关键：为绝对定位提供参考点 */
+  position: relative;
+  /* 关键：为绝对定位提供参考点 */
 }
 
 .controls {
@@ -209,13 +229,56 @@ const showStartupPrompt = () => {
   right: 15px;
   font-size: 0.9em;
   color: #888;
-  pointer-events: none; /* 可选：防止干扰点击事件 */
+  pointer-events: none;
+  /* 可选：防止干扰点击事件 */
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+/* 默认隐藏桌面布局 */
+.desktop-controls {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 默认显示移动端布局 */
+.mobile-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-controls .row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
 }
 
 @media (max-width: 600px) {
   .audio {
-    max-width: 100%;
+    max-width: 120%;
+    /* 居中 */
+    margin: 0 auto;
   }
 }
 
+/* PC 端：宽度大于 600px 显示桌面布局 */
+@media (min-width: 601px) {
+  .desktop-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .mobile-controls {
+    display: none;
+  }
+}
 </style>

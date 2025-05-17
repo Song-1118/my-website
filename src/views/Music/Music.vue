@@ -96,13 +96,16 @@ const confirm = () => {
 }
 @media (max-width: 768px) {
     .card {
-        max-width: 80%;
+        width: 50%;
     }
-    .dialog {
-        max-width: 80%;
+
+    /* 修改为 Element Plus 的类名 */
+    .el-dialog {
+        width: 50% !important; /* 更适合移动端 */
     }
+
     .input {
-        max-width: 80%;
+        max-width: 50%;
     }
 }
 </style>

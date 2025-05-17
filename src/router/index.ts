@@ -5,7 +5,8 @@ import Web from "../views/Web.vue";
 import Error404 from "../views/Error404.vue";
 import Music from "../views/Music/Music.vue";
 import Default from "../views/Music/Default.vue";
-import Player from '../views/Music/Player.vue'
+import Player from "../views/Music/Player.vue";
+import Player2 from "../views/Music/Player2.vue";
 
 const routes = [
   {
@@ -34,9 +35,14 @@ const routes = [
     component: Default,
   },
   {
-  path: '/player',
-  name: 'Player',
-  component: Player
+    path: "/player",
+    name: "Player",
+    component: Player,
+  },
+  {
+    path: "/player2",
+    name: "Player2",
+    component: Player2,
   },
   {
     // 404界面捕捉跳转

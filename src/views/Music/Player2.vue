@@ -1,0 +1,418 @@
+<template>
+    <div class="audio-player">
+        <!-- 歌曲信息 -->
+        <div class="song-info">
+            <h3 class="title">{{ currentSong.title }}</h3>
+            <p class="artist">{{ currentSong.artist }}</p>
+        </div>
+
+        <!-- 自定义进度条 -->
+        <div class="progress-bar" @mousedown="startDrag">
+            <div class="progress" :style="{ width: progress + '%' }"></div>
+            <div class="drag-point" :style="{ left: progress + '%' }" @mousedown="startDrag"></div>
+        </div>
+
+        <!-- 时间显示 -->
+        <div class="time-display">
+            <span>{{ formattedCurrentTime }}</span>
+            <span>{{ formattedDuration }}</span>
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="controls">
+            <el-tooltip content="上一首" placement="top">
+                <el-icon :size="24" @click="prevTrack">
+                    <CaretLeft />
+                </el-icon>
+            </el-tooltip>
+
+            <el-tooltip :content="isPlaying ? '暂停' : '播放'" placement="top">
+                <el-icon :size="32" @click="togglePlay">
+                    <component :is="isPlaying ? 'VideoPause' : 'VideoPlay'" />
+                </el-icon>
+            </el-tooltip>
+
+            <el-tooltip content="下一首" placement="top">
+                <el-icon :size="24" @click="nextTrack">
+                    <CaretRight />
+                </el-icon>
+            </el-tooltip>
+
+            <!-- 音量控制 -->
+            <div class="volume-control">
+                <el-tooltip :content="isMuted ? '取消静音' : '静音'" placement="top">
+                    <el-icon @click="toggleMute">
+                        <component :is="volumeIcon" />
+                    </el-icon>
+                </el-tooltip>
+                <el-slider v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
+                    @input="updateVolume" />
+            </div>
+        </div>
+
+        <!-- 隐藏的音频元素 -->
+        <audio ref="audioElement" :src="currentSong.audioUrl" @timeupdate="updateTime"
+            @loadedmetadata="updateDuration"></audio>
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { CaretLeft, CaretRight } from '@element-plus/icons-vue'
+
+// 补充响应式状态
+const currentSong = ref({
+    title: '',
+    artist: '未知艺术家',
+    audioUrl: ''
+})
+
+const isPlaying = ref(false)
+const progress = ref(0)
+const currentTime = ref(0)
+const duration = ref(0)
+const volume = ref(0.8)
+const isMuted = ref(false)
+const lastVolume = ref(0.8)
+
+// 音频元素引用
+const audioElement = ref<HTMLAudioElement | null>(null)
+
+// 计算属性：音量图标
+const volumeIcon = computed(() => {
+  if (isMuted.value || volume.value === 0) return 'MuteNotification'
+  return volume.value > 0.5 ? 'Microphone' : 'TurnOffMicrophone'
+})
+
+// 曲目切换方法
+const prevTrack = () => changeTrack(-1)
+const nextTrack = () => changeTrack(1)
+
+const changeTrack = (direction: number) => {
+  if (!currentTrack.value) return
+  
+  const currentIndex = audioLibrary.findIndex(t => t.id === currentTrack.value?.id)
+  let newIndex = currentIndex + direction
+  
+  // 循环处理
+  if (newIndex < 0) newIndex = audioLibrary.length - 1
+  if (newIndex >= audioLibrary.length) newIndex = 0
+  
+  setupCurrentTrack(audioLibrary[newIndex])
+  
+  // 自动播放
+  if (isPlaying.value) {
+    audioElement.value?.play()
+  }
+}
+
+// 音量控制方法
+const updateVolume = (value: number) => {
+  if (audioElement.value) {
+    audioElement.value.volume = value
+    isMuted.value = value === 0
+    if (value > 0) lastVolume.value = value
+  }
+}
+
+const toggleMute = () => {
+  isMuted.value = !isMuted.value
+  if (audioElement.value) {
+    audioElement.value.volume = isMuted.value ? 0 : lastVolume.value
+    volume.value = isMuted.value ? 0 : lastVolume.value
+  }
+}
+
+const formatVolume = (value: number) => `${Math.round(value * 100)}%`
+
+// 在初始化时设置默认音量
+onMounted(() => {
+  if (audioElement.value) {
+    audioElement.value.volume = volume.value
+  }
+})
+// 格式化时间显示（秒 -> mm:ss）
+function formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`
+}
+
+// 计算属性：格式化显示
+const formattedCurrentTime = computed(() => formatTime(currentTime.value))
+const formattedDuration = computed(() => formatTime(duration.value))
+
+// 更新当前播放时间
+function updateTime() {
+    if (audioElement.value) {
+        currentTime.value = audioElement.value.currentTime
+        progress.value = (currentTime.value / audioElement.value.duration) * 100 || 0
+    }
+}
+
+// 获取音频总时长
+function updateDuration() {
+    if (audioElement.value) {
+        duration.value = audioElement.value.duration
+    }
+}
+
+// 切换播放/暂停
+function togglePlay() {
+    if (!audioElement.value) return
+    if (isPlaying.value) {
+        audioElement.value.pause()
+    } else {
+        audioElement.value.play().catch(e => {
+            console.error('播放失败:', e)
+            ElMessage.error('播放失败，请点击“播放”重试')
+        })
+    }
+    isPlaying.value = !isPlaying.value
+}
+
+// 拖动进度条逻辑
+function startDrag(event: MouseEvent) {
+    if (!audioElement.value) return
+    const progressBar = event.currentTarget as HTMLElement
+    const rect = progressBar.getBoundingClientRect()
+    const offsetX = event.clientX - rect.left
+    const newTime = (offsetX / rect.width) * audioElement.value.duration
+    audioElement.value.currentTime = newTime
+}
+
+// 类型定义 -----------------------------------------------
+interface AudioTrack {
+    id: string
+    title: string
+    src: string
+    singer: string
+    duration?: number
+}
+
+// 响应式状态 ---------------------------------------------
+const currentTrack = ref<AudioTrack>()
+const audioQueue = ref<AudioTrack[]>([])
+
+// 初始化音频库 -------------------------------------------
+const audioLibrary: AudioTrack[] = [
+    { id: '001', singer: '周文凯', title: '苟活', src: '/musics/苟活.mp3' },
+    { id: '002', singer: '周文凯', title: '苟活之重生', src: '/musics/苟活之重生.mp3' },
+    { id: '003', singer: '揽佬SKAI ISYOURGOD', title: '八方来财(DJ版)', src: './musics/八方来财(DJ版).mp3' },
+    { id: '004', singer: 'L（桃籽）', title: '此去半生', src: '/musics/此去半生.mp3' },
+    { id: '005', singer: '奇然/沈谧仁', title: '琵琶行(0.75X抒情版)', src: '/musics/琵琶行(0.75X抒情版).mp3' },
+    { id: '006', singer: '周杰伦', title: '青花瓷', src: '/musics/青花瓷.mp3' },
+    { id: '007', singer: '阿禹ayy', title: '耍把戏', src: '/musics/耍把戏.mp3' },
+    { id: '008', singer: '七叔（叶泽浩）', title: '踏山河', src: '/musics/踏山河.mp3' },
+    { id: '009', singer: 'LBI利比（时柏尘）', title: '跳楼机', src: '/musics/跳楼机.mp3' },
+    { id: '010', singer: '王子健', title: '循迹', src: '/musics/循迹.mp3' },
+    { id: '011', singer: 'Teddy Swims', title: 'Lose Control', src: '/musics/Lose Control.mp3' },
+    { id: '012', singer: '5 Seconds of Summer', title: 'Teeth', src: '/musics/Teeth.mp3' },
+    { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3' }
+]
+
+// 路由参数处理 -------------------------------------------
+const route = useRoute()
+
+// 生命周期钩子 -------------------------------------------
+onMounted(() => {
+    initializeAudioPlayer()
+})
+
+// 核心逻辑实现 -------------------------------------------
+const initializeAudioPlayer = () => {
+    const trackParam = parseRouteParam()
+    const targetTrack = trackParam ? findTrack(trackParam) : audioLibrary[0]
+
+    if (targetTrack) {
+        setupCurrentTrack(targetTrack)
+    } else {
+        handleTrackNotFound(trackParam)
+    }
+}
+
+// 路由参数解析 -------------------------------------------
+const parseRouteParam = (): string | null => {
+    const param = route.query.track
+    return typeof param === 'string' ? param : null
+}
+
+// 音频资源查找 -------------------------------------------
+const findTrack = (identifier: string): AudioTrack | undefined => {
+    // 支持通过ID或src查找
+    return audioLibrary.find(track =>
+        track.id === identifier || track.src === identifier
+    )
+}
+
+// 播放器设置 ---------------------------------------------
+const setupCurrentTrack = async (track: AudioTrack) => {
+    try {
+        // 先释放之前的音频资源
+        if (audioElement.value) {
+            audioElement.value.pause()
+            audioElement.value.src = ''
+        }
+
+        currentTrack.value = track
+        currentSong.value = {
+            title: track.title,
+            artist: track.singer,
+            audioUrl: track.src
+        }
+
+        // ✅ 正确方式：直接设置 src 并加载
+        if (audioElement.value) {
+            audioElement.value.src = track.src
+            audioElement.value.load()
+        }
+
+        // 如果原本正在播放，则自动开始播放
+        if (isPlaying.value) {
+            await audioElement.value?.play()
+        }
+    } catch (error) {
+        console.error('音频初始化失败:', error)
+        ElMessage.error('音频加载失败，请检查文件路径')
+    }
+}
+
+// 音频预加载机制 -----------------------------------------
+const preloadAudio = async (src: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        const audio = new Audio(src)
+        audio.addEventListener('loadedmetadata', () => {
+            if (currentTrack.value) {
+                currentTrack.value.duration = audio.duration
+            }
+            resolve()
+        })
+        audio.addEventListener('error', () => {
+            reject(new Error(`无法加载音频资源: ${src}`))
+        })
+        audio.preload = 'auto'
+    })
+}
+
+// 错误处理 -----------------------------------------------
+const handleTrackNotFound = (identifier?: string | null) => {
+    const warningMessage = identifier ?
+        `未找到指定音频: ${identifier}` :
+        '未提供有效音频参数'
+
+    ElMessage.warning(`${warningMessage}，已加载默认音频`)
+    setupCurrentTrack(audioLibrary[0])
+}
+
+// 队列管理函数（示例）------------------------------------
+const addToQueue = (track: AudioTrack) => {
+    audioQueue.value.push(track)
+}
+
+const clearQueue = () => {
+    audioQueue.value = []
+}
+</script>
+
+<style scoped>
+.audio-player {
+    max-width: 400px;
+    margin: 20px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.song-info {
+    margin-bottom: 15px;
+}
+
+.title {
+    margin: 0;
+    color: #333;
+}
+
+.artist {
+    margin: 5px 0 0;
+    color: #666;
+}
+
+.progress-bar {
+    position: relative;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin: 15px 0;
+    cursor: pointer;
+}
+
+.progress {
+    position: absolute;
+    height: 100%;
+    background: #409eff;
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.drag-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #409eff;
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.el-icon {
+    cursor: pointer;
+    color: #409eff;
+    transition: color 0.3s;
+}
+
+.el-icon:hover {
+    color: #66b1ff;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 20px;
+}
+
+.el-slider {
+  width: 100px;
+}
+
+.el-icon {
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.el-icon:hover {
+  color: var(--el-color-primary);
+}
+</style>

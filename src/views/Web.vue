@@ -34,13 +34,6 @@ const cards = [
         isVisible: false
     },
     {
-        title: '宋氏集团',
-        description: '宋氏集团官网',
-        link: 'https://songziming.dpdns.org',
-        linkText: '宋氏集团',
-        isVisible: false
-    },
-    {
         title: 'GitHub',
         description: '项目源码托管在 GitHub 上。',
         link: 'https://github.com/song-1118',
