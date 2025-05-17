@@ -7,7 +7,7 @@
       </template>
 
       <!-- 音频控件 -->
-      <audio controls ref="audioRef" :src="currentTrack?.src" />
+      <audio class="audio" controls ref="audioRef" :src="currentTrack?.src" />
 
       <!-- 控制按钮 -->
       <div class="controls">
@@ -211,4 +211,11 @@ const showStartupPrompt = () => {
   color: #888;
   pointer-events: none; /* 可选：防止干扰点击事件 */
 }
+
+@media (max-width: 600px) {
+  .audio {
+    max-width: 80%;
+  }
+}
+
 </style>

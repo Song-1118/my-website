@@ -12,9 +12,9 @@
     <router-view />
     <el-dialog class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" width="500" :before-close="handleClose">
         <p>姓名：</p>
-        <el-input v-model="name" placeholder="你的姓名/可填学号"></el-input>
+        <el-input class="input" v-model="name" placeholder="你的姓名/可填学号"></el-input>
         <p>歌名：</p>
-        <el-input v-model="songName" placeholder="你希望添加的歌名"></el-input>
+        <el-input class="input" v-model="songName" placeholder="你希望添加的歌名"></el-input>
         <p>歌单：</p>
         <el-cascader v-model="value" :options="options" @change="handleChange" placeholder="请选择歌单" />
         <template #footer>
@@ -99,6 +99,9 @@ const confirm = () => {
         width: 80%;
     }
     .dialog {
+        width: 80%;
+    }
+    .input {
         width: 80%;
     }
 }
