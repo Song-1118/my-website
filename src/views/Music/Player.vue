@@ -37,7 +37,7 @@
       <div class="version-info">
         <h2>极光栈播放器V1.0</h2>
       </div>
-      <el-link :href="`/player2?track=${currentTrack?.id}`">
+      <el-link type="primary" :href="`/player2?track=${currentTrack?.id}`">
         跳转到新版播放器
       </el-link>
     </el-card>

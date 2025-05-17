@@ -17,35 +17,38 @@
             <span>{{ formattedCurrentTime }}</span>
             <span>{{ formattedDuration }}</span>
         </div>
+        <!-- 歌词显示 -->
+        <div class="lyric-display" v-if="!noLyric">
+            <div v-for="(line, index) in lyrics" :key="index" class="lyric-line"
+                :class="{ active: index === currentLyricIndex }">
+                {{ line.text }}
+            </div>
+        </div>
+
+        <div class="no-lyric" v-else>
+            暂无歌词
+        </div>
 
         <!-- 控制按钮 -->
         <div class="controls">
-            <el-tooltip content="上一首" placement="top">
-                <el-icon :size="24" @click="prevTrack">
-                    <CaretLeft />
-                </el-icon>
-            </el-tooltip>
+            <el-icon :size="24" @click="prevTrack">
+                <CaretLeft />
+            </el-icon>
 
-            <el-tooltip :content="isPlaying ? '暂停' : '播放'" placement="top">
-                <el-icon :size="32" @click="togglePlay">
-                    <component :is="isPlaying ? 'VideoPause' : 'VideoPlay'" />
-                </el-icon>
-            </el-tooltip>
+            <el-icon :size="32" @click="togglePlay">
+                <component :is="isPlaying ? 'VideoPause' : 'VideoPlay'" />
+            </el-icon>
 
-            <el-tooltip content="下一首" placement="top">
-                <el-icon :size="24" @click="nextTrack">
-                    <CaretRight />
-                </el-icon>
-            </el-tooltip>
+            <el-icon :size="24" @click="nextTrack">
+                <CaretRight />
+            </el-icon>
 
             <!-- 音量控制 -->
             <div class="volume-control">
-                <el-tooltip :content="isMuted ? '取消静音' : '静音'" placement="top">
-                    <el-icon @click="toggleMute">
-                        <component :is="volumeIcon" />
-                    </el-icon>
-                </el-tooltip>
-                <el-slider v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
+                <el-icon @click="toggleMute">
+                    <component :is="volumeIcon" />
+                </el-icon>
+                <el-slider v-if="!isIOS" v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
                     @input="updateVolume" />
             </div>
         </div>
@@ -76,14 +79,60 @@ const duration = ref(0)
 const volume = ref(0.8)
 const isMuted = ref(false)
 const lastVolume = ref(0.8)
-
-// 音频元素引用
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+// 歌词相关状态
+const lyrics = ref<{ time: number; text: string }[]>([])
+const currentLyricIndex = ref<number>(0)
+const noLyric = ref<boolean>(false)
 const audioElement = ref<HTMLAudioElement | null>(null)
+let lastScrollIndex = -1
+// 解析 LRC 歌词
+function parseLRC(text: string): { time: number; text: string }[] {
+    const lines = text.split('\n');
+    const parsed = lines
+        .map(line => {
+            const result = line.match(/\[(\d+:\d+\.\d+)\](.*)/);
+            if (result) {
+                const [_, timeStr, text] = result;
+                const [min, sec] = timeStr.split(/[:.]/).map(parseFloat);
+                const time = min * 60 + sec;
+                return { time, text: text.trim() || '...' }; // 处理空行
+            }
+            return null;
+        })
+        .filter((item): item is { time: number; text: string } => item !== null); // 过滤无效行
+
+    return parsed;
+}
+
+// 加载歌词文件
+async function loadLyric(track: AudioTrack) {
+    try {
+        const lyricPath = track.src.replace('.mp3', '.lrc').replace('/musics/', '/lyrics/');
+        const response = await fetch(lyricPath);
+        if (!response.ok) throw new Error('歌词加载失败');
+
+        const text = await response.text();
+        const parsedLyrics = parseLRC(text);
+        lyrics.value = parsedLyrics;
+        noLyric.value = false;
+    } catch (error) {
+        console.warn('未找到歌词:', error);
+        lyrics.value = [];
+        noLyric.value = true;
+        ElMessage.warning('歌词加载失败，请检查歌词文件路径'); // 增加提示
+    }
+}
+updateLyricHighlight() // 首次加载歌词后立即定位到第一句
+
+if (isIOS) {
+    ElMessage.info('iOS 上请使用物理音量键调节音量')
+}
 
 // 计算属性：音量图标
 const volumeIcon = computed(() => {
-  if (isMuted.value || volume.value === 0) return 'MuteNotification'
-  return volume.value > 0.5 ? 'Microphone' : 'TurnOffMicrophone'
+    if (isMuted.value || volume.value === 0) return 'MuteNotification'
+    return volume.value > 0.5 ? 'Microphone' : 'TurnOffMicrophone'
 })
 
 // 曲目切换方法
@@ -91,47 +140,47 @@ const prevTrack = () => changeTrack(-1)
 const nextTrack = () => changeTrack(1)
 
 const changeTrack = (direction: number) => {
-  if (!currentTrack.value) return
-  
-  const currentIndex = audioLibrary.findIndex(t => t.id === currentTrack.value?.id)
-  let newIndex = currentIndex + direction
-  
-  // 循环处理
-  if (newIndex < 0) newIndex = audioLibrary.length - 1
-  if (newIndex >= audioLibrary.length) newIndex = 0
-  
-  setupCurrentTrack(audioLibrary[newIndex])
-  
-  // 自动播放
-  if (isPlaying.value) {
-    audioElement.value?.play()
-  }
+    if (!currentTrack.value) return
+
+    const currentIndex = audioLibrary.findIndex(t => t.id === currentTrack.value?.id)
+    let newIndex = currentIndex + direction
+
+    // 循环处理
+    if (newIndex < 0) newIndex = audioLibrary.length - 1
+    if (newIndex >= audioLibrary.length) newIndex = 0
+
+    setupCurrentTrack(audioLibrary[newIndex])
+
+    // 自动播放
+    if (isPlaying.value) {
+        audioElement.value?.play()
+    }
 }
 
 // 音量控制方法
 const updateVolume = (value: number) => {
-  if (audioElement.value) {
-    audioElement.value.volume = value
-    isMuted.value = value === 0
-    if (value > 0) lastVolume.value = value
-  }
+    if (audioElement.value) {
+        audioElement.value.volume = value
+        isMuted.value = value === 0
+        if (value > 0) lastVolume.value = value
+    }
 }
 
 const toggleMute = () => {
-  isMuted.value = !isMuted.value
-  if (audioElement.value) {
-    audioElement.value.volume = isMuted.value ? 0 : lastVolume.value
-    volume.value = isMuted.value ? 0 : lastVolume.value
-  }
+    isMuted.value = !isMuted.value
+    if (audioElement.value) {
+        audioElement.value.volume = isMuted.value ? 0 : lastVolume.value
+        volume.value = isMuted.value ? 0 : lastVolume.value
+    }
 }
 
 const formatVolume = (value: number) => `${Math.round(value * 100)}%`
 
 // 在初始化时设置默认音量
 onMounted(() => {
-  if (audioElement.value) {
-    audioElement.value.volume = volume.value
-  }
+    if (audioElement.value) {
+        audioElement.value.volume = volume.value
+    }
 })
 // 格式化时间显示（秒 -> mm:ss）
 function formatTime(seconds: number): string {
@@ -149,7 +198,51 @@ function updateTime() {
     if (audioElement.value) {
         currentTime.value = audioElement.value.currentTime
         progress.value = (currentTime.value / audioElement.value.duration) * 100 || 0
+
+        // 更新歌词高亮
+        updateLyricHighlight()
     }
+}
+
+function updateLyricHighlight() {
+    const current = currentTime.value;
+    let index = 0;
+    for (let i = 0; i < lyrics.value.length; i++) {
+        if (current >= lyrics.value[i].time) {
+            index = i;
+        } else {
+            break;
+        }
+    }
+
+    // 只有当前索引变化时才更新和滚动
+    if (index === currentLyricIndex.value && index === lastScrollIndex) {
+        return;
+    }
+
+    currentLyricIndex.value = index;
+    lastScrollIndex = index;
+
+    // 使用 nextTick 确保 DOM 更新后再滚动
+    setTimeout(() => {
+        const lyricLines = document.querySelectorAll('.lyric-line');
+        const container = lyricLines[0]?.parentElement as HTMLElement | null;
+
+        if (container && lyricLines[index]) {
+            const line = lyricLines[index] as HTMLElement;
+
+            // 获取容器和行的实际高度
+            const containerHeight = container.clientHeight;
+            const lineHeight = line.offsetHeight;
+
+            // 计算当前行相对于容器的偏移量
+            const offsetTopInsideContainer = line.offsetTop;
+
+            // 调整公式：scrollTop = offsetTop - (containerHeight / 2) + (lineHeight / 2) - 容器内边距
+            const containerPaddingTop = parseFloat(getComputedStyle(container).paddingTop);
+            container.scrollTop = offsetTopInsideContainer - (containerHeight / 2) + (lineHeight / 2) - containerPaddingTop - containerHeight * 1.2;
+        }
+    }, 0);
 }
 
 // 获取音频总时长
@@ -263,11 +356,14 @@ const setupCurrentTrack = async (track: AudioTrack) => {
             audioUrl: track.src
         }
 
-        // ✅ 正确方式：直接设置 src 并加载
+        // 设置音频源并加载
         if (audioElement.value) {
             audioElement.value.src = track.src
             audioElement.value.load()
         }
+
+        // 加载歌词
+        await loadLyric(track)
 
         // 如果原本正在播放，则自动开始播放
         if (isPlaying.value) {
@@ -389,30 +485,87 @@ const clearQueue = () => {
 .el-icon:hover {
     color: #66b1ff;
 }
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 20px;
-}
 
-.volume-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 20px;
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .el-slider {
-  width: 100px;
+    width: 100px;
 }
 
 .el-icon {
-  transition: color 0.3s ease;
-  cursor: pointer;
+    transition: color 0.3s ease;
+    cursor: pointer;
 }
 
 .el-icon:hover {
-  color: var(--el-color-primary);
+    color: var(--el-color-primary);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    /* 加大间距 */
+    margin-left: 20px;
+}
+
+.volume-control .el-slider {
+    width: 100px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.volume-control .el-icon {
+    line-height: 1;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.lyric-line.active {
+    color: #409eff;
+    opacity: 1;
+    font-weight: bold;
+    transform: scale(1.05);
+}
+
+.no-lyric {
+    margin-top: 20px;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    background: #f5f5f5;
+    /* 增加背景色 */
+    border-radius: 8px;
+    /* 增加圆角 */
+}
+
+.lyric-display {
+    margin-top: 20px;
+    height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    color: #666;
+    transition: all 0.3s ease;
+    scroll-behavior: smooth;
+    /* 增加平滑滚动效果 */
+}
+
+.lyric-line {
+    padding: 8px 0;
+    /* 增加行间距 */
+    text-align: center;
+    opacity: 0.6;
+    transition: all 0.3s ease;
 }
 </style>
