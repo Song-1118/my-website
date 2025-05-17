@@ -214,7 +214,7 @@ const showStartupPrompt = () => {
 
 @media (max-width: 600px) {
   .audio {
-    max-width: 80%;
+    max-width: 50%;
   }
 }
 
