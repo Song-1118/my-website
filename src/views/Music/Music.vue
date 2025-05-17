@@ -94,4 +94,9 @@ const confirm = () => {
     margin: 20px;
     cursor: pointer;
 }
+@media (max-width: 768px) {
+    .card {
+        width: 80%;
+    }
+}
 </style>
