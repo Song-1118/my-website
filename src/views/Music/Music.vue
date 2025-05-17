@@ -96,13 +96,13 @@ const confirm = () => {
 }
 @media (max-width: 768px) {
     .card {
-        width: 80%;
+        max-width: 80%;
     }
     .dialog {
-        width: 80%;
+        max-width: 80%;
     }
     .input {
-        width: 80%;
+        max-width: 80%;
     }
 }
 </style>
