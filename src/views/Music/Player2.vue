@@ -25,10 +25,11 @@
             </div>
         </div>
 
-        <div class="no-lyric" v-else>
-            暂无歌词
+        <div class="no-lyric" v-if="noLyric">
+            {{ currentTrack?.pure_music ? '纯音乐，请欣赏' : '此歌暂无歌词' }}
         </div>
 
+        <!-- 控制按钮 -->
         <!-- 控制按钮 -->
         <div class="controls">
             <el-icon :size="24" @click="prevTrack">
@@ -51,6 +52,11 @@
                 <el-slider v-if="!isIOS" v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
                     @input="updateVolume" />
             </div>
+
+            <!-- 下载按钮 -->
+            <el-icon :size="24" @click="downloadTrack" style="margin-left: 20px;">
+                <Download />
+            </el-icon>
         </div>
 
         <!-- 隐藏的音频元素 -->
@@ -69,7 +75,7 @@ import { CaretLeft, CaretRight } from '@element-plus/icons-vue'
 const currentSong = ref({
     title: '',
     artist: '未知艺术家',
-    audioUrl: ''
+    audioUrl: '',
 })
 
 const isPlaying = ref(false)
@@ -105,6 +111,27 @@ function parseLRC(text: string): { time: number; text: string }[] {
     return parsed;
 }
 
+// 下载当前曲目
+function downloadTrack() {
+    if (!currentTrack.value) {
+        ElMessage.warning('当前没有可下载的曲目');
+        return;
+    }
+
+    const trackUrl = currentTrack.value.src;
+    const trackName = currentTrack.value.title;
+
+    // 创建一个隐藏的 <a> 标签用于下载
+    const link = document.createElement('a');
+    link.href = trackUrl;
+    link.download = `${trackName}.mp3`; // 设置下载文件名
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    ElMessage.success('下载成功');
+}
+
 // 加载歌词文件
 async function loadLyric(track: AudioTrack) {
     try {
@@ -115,12 +142,12 @@ async function loadLyric(track: AudioTrack) {
         const text = await response.text();
         const parsedLyrics = parseLRC(text);
         lyrics.value = parsedLyrics;
-        noLyric.value = false;
+        noLyric.value = false; // 有歌词时设置为 false
     } catch (error) {
         console.warn('未找到歌词:', error);
         lyrics.value = [];
-        noLyric.value = true;
-        ElMessage.warning('歌词加载失败，请检查歌词文件路径'); // 增加提示
+        noLyric.value = true; // 无歌词时设置为 true
+        ElMessage.warning(track.pure_music ? '纯音乐，请欣赏' : '歌词加载失败，请检查歌词文件路径');
     }
 }
 updateLyricHighlight() // 首次加载歌词后立即定位到第一句
@@ -283,6 +310,7 @@ interface AudioTrack {
     src: string
     singer: string
     duration?: number
+    pure_music?: boolean
 }
 
 // 响应式状态 ---------------------------------------------
@@ -303,7 +331,7 @@ const audioLibrary: AudioTrack[] = [
     { id: '010', singer: '王子健', title: '循迹', src: '/musics/循迹.mp3' },
     { id: '011', singer: 'Teddy Swims', title: 'Lose Control', src: '/musics/Lose Control.mp3' },
     { id: '012', singer: '5 Seconds of Summer', title: 'Teeth', src: '/musics/Teeth.mp3' },
-    { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3' }
+    { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3', pure_music: false }
 ]
 
 // 路由参数处理 -------------------------------------------
@@ -349,7 +377,7 @@ const setupCurrentTrack = async (track: AudioTrack) => {
             audioElement.value.src = ''
         }
 
-        currentTrack.value = track
+        currentTrack.value = track; // 确保 currentTrack 被正确赋值
         currentSong.value = {
             title: track.title,
             artist: track.singer,
@@ -368,6 +396,14 @@ const setupCurrentTrack = async (track: AudioTrack) => {
         // 如果原本正在播放，则自动开始播放
         if (isPlaying.value) {
             await audioElement.value?.play()
+        }
+
+        // 根据 pure_music 字段设置无歌词显示内容
+        if (track.pure_music) {
+            noLyric.value = true
+            ElMessage.info('纯音乐，请欣赏')
+        } else {
+            noLyric.value = false
         }
     } catch (error) {
         console.error('音频初始化失败:', error)
@@ -567,5 +603,15 @@ const clearQueue = () => {
     text-align: center;
     opacity: 0.6;
     transition: all 0.3s ease;
+}
+
+.controls .el-icon {
+    cursor: pointer;
+    color: #409eff;
+    transition: color 0.3s;
+}
+
+.controls .el-icon:hover {
+    color: #66b1ff;
 }
 </style>
