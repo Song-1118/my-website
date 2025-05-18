@@ -44,11 +44,11 @@
             </el-icon>
 
             <!-- 音量控制 -->
-            <div class="volume-control" v-if="!isIOS">
-                <el-icon @click="toggleMute">
+            <div class="volume-control">
+                <el-icon @click="toggleMute" v-if="!isIOS">
                     <component :is="volumeIcon" />
                 </el-icon>
-                <el-slider v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
+                <el-slider v-if="!isIOS" v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
                     @input="updateVolume" />
             </div>
 
