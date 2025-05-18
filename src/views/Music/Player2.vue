@@ -44,11 +44,11 @@
             </el-icon>
 
             <!-- 音量控制 -->
-            <div class="volume-control">
+            <div class="volume-control" v-if="!isIOS">
                 <el-icon @click="toggleMute">
                     <component :is="volumeIcon" />
                 </el-icon>
-                <el-slider v-if="!isIOS" v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
+                <el-slider v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
                     @input="updateVolume" />
             </div>
 
@@ -84,7 +84,7 @@ const duration = ref(0)
 const volume = ref(0.8)
 const isMuted = ref(false)
 const lastVolume = ref(0.8)
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+const isIOS = /iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream
 // 歌词相关状态
 const lyrics = ref<{ time: number; text: string }[]>([])
 const currentLyricIndex = ref<number>(0)
