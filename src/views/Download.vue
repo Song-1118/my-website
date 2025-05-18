@@ -98,13 +98,14 @@ const downloads = ref([
         icon: '/icons/wechat.png' // 修改为绝对路径
     },
     {
-        title: '项目模板包',
-        description: '前端项目初始化模板，含 Vue3 + TypeScript 环境配置。',
+        title: 'QQ',
+        description: '轻松做自己',
+        buttonText: '下载',
         versions: {
-            win32: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/WeChatWin_W.exe',
-            android: 'https://github.com/Song-1118/my-website/releases/download/V1.0.0/Wechatwin_a.apk'
+            win32: 'https://github.com/Song-1118/my-website/releases/download/V1.4.9/QQ_winx86.exe',
+            Macos: 'https://github.com/Song-1118/my-website/releases/download/V1.4.9/QQ_macOS.dmg'
         },
-        icon: '/icons/template.png' // 修改为绝对路径
+        icon: '/icons/qq.png'
     }
 ]);
 

@@ -449,7 +449,7 @@ const clearQueue = () => {
     height: 100%;
     background: #409eff;
     border-radius: 2px;
-    transition: width 0.1s linear;
+    transition: width 0.3s linear;
 }
 
 .drag-point {
