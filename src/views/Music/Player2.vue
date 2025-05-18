@@ -288,7 +288,7 @@ function updateLyricHighlight() {
 
             // 调整公式：scrollTop = offsetTop - (containerHeight / 2) + (lineHeight / 2) - 容器内边距
             const containerPaddingTop = parseFloat(getComputedStyle(container).paddingTop);
-            container.scrollTop = offsetTopInsideContainer - (containerHeight / 2) + (lineHeight / 2) - containerPaddingTop - containerHeight * 1.2;
+            container.scrollTop = offsetTopInsideContainer - (containerHeight / 2) + (lineHeight / 2) - containerPaddingTop - containerHeight * 1.7;
         }
     }, 0);
 }
