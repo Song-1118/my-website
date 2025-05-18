@@ -1,21 +1,9 @@
 <template>
   <div class="music-list-container">
     <el-row :gutter="20" justify="start">
-      <el-col
-        v-for="(music, index) in musicList"
-        :key="index"
-        :xs="24"
-        :sm="12"
-        :md="8"
-        :lg="8"
-        :xl="8"
-        style="margin-bottom: 20px;"
-      >
-        <el-card
-          shadow="hover"
-          class="music-card"
-          @click="goToPlayer(music)"
-        >
+      <el-col v-for="(music, index) in musicList" :key="index" :xs="24" :sm="12" :md="8" :lg="8" :xl="8"
+        style="margin-bottom: 20px;">
+        <el-card shadow="hover" class="music-card" @click="goToPlayer(music)">
           <div class="card-content">
             <h3>{{ music.name }}</h3>
             <p>点击播放</p>
@@ -43,19 +31,19 @@ interface MusicItem {
 }
 
 const musicList = ref<MusicItem[]>([
-  { id: '001', name: '苟活.mp3', src: './musics/苟活.mp3' },
-  { id: '002', name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
-  { id: '003', name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
-  { id: '004', name: '此去半生.mp3', src: './musics/此去半生.mp3' },
-  { id: '005', name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },
-  { id: '006', name: '青花瓷.mp3', src: './musics/青花瓷.mp3' },
-  { id: '007', name: '耍把戏.mp3', src: './musics/耍把戏.mp3' },
-  { id: '008', name: '踏山河.mp3', src: './musics/踏山河.mp3' },
-  { id: '009', name: '跳楼机.mp3', src: './musics/跳楼机.mp3' },
-  { id: '010', name: '循迹.mp3', src: './musics/循迹.mp3' },
-  { id: '011', name: 'Lose Control.mp3', src: './musics/Lose Control.mp3' },
-  { id: '012', name: 'Teeth.mp3', src: './musics/Teeth.mp3' },
-  { id: '013', name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3' }
+  { id: '001', name: '苟活', src: './musics/苟活.mp3' },
+  { id: '002', name: '苟活之重生', src: './musics/苟活之重生.mp3' },
+  { id: '003', name: '八方来财(DJ版)', src: './musics/八方来财(DJ版).mp3' },
+  { id: '004', name: '此去半生', src: './musics/此去半生.mp3' },
+  { id: '005', name: '琵琶行(0.75X抒情版)', src: './musics/琵琶行(0.75X抒情版).mp3' },
+  { id: '006', name: '青花瓷', src: './musics/青花瓷.mp3' },
+  { id: '007', name: '耍把戏', src: './musics/耍把戏.mp3' },
+  { id: '008', name: '踏山河', src: './musics/踏山河.mp3' },
+  { id: '009', name: '跳楼机', src: './musics/跳楼机.mp3' },
+  { id: '010', name: '循迹', src: './musics/循迹.mp3' },
+  { id: '011', name: 'Lose Control', src: './musics/Lose Control.mp3' },
+  { id: '012', name: 'Teeth', src: './musics/Teeth.mp3' },
+  { id: '013', name: 'Wake(58秒Studio片段)', src: './musics/Wake(58秒Studio片段).mp3' }
 ])
 
 const goToPlayer = (music: MusicItem) => {
