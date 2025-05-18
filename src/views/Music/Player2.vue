@@ -30,7 +30,6 @@
         </div>
 
         <!-- 控制按钮 -->
-        <!-- 控制按钮 -->
         <div class="controls">
             <el-icon :size="24" @click="prevTrack">
                 <CaretLeft />
@@ -54,7 +53,7 @@
             </div>
 
             <!-- 下载按钮 -->
-            <el-icon :size="24" @click="downloadTrack" style="margin-left: 20px;">
+            <el-icon v-if="isComputer" :size="24" @click="downloadTrack" style="margin-left: 20px;">
                 <Download />
             </el-icon>
         </div>
@@ -92,6 +91,12 @@ const currentLyricIndex = ref<number>(0)
 const noLyric = ref<boolean>(false)
 const audioElement = ref<HTMLAudioElement | null>(null)
 let lastScrollIndex = -1
+
+const isComputer = computed(() => {
+    const userAgent = navigator.userAgent;
+    return !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+});
+
 // 解析 LRC 歌词
 function parseLRC(text: string): { time: number; text: string }[] {
     const lines = text.split('\n');
@@ -319,6 +324,7 @@ const audioQueue = ref<AudioTrack[]>([])
 
 // 初始化音频库 -------------------------------------------
 const audioLibrary: AudioTrack[] = [
+    // ---默认---
     { id: '001', singer: '周文凯', title: '苟活', src: '/musics/苟活.mp3' },
     { id: '002', singer: '周文凯', title: '苟活之重生', src: '/musics/苟活之重生.mp3' },
     { id: '003', singer: '揽佬SKAI ISYOURGOD', title: '八方来财(DJ版)', src: './musics/八方来财(DJ版).mp3' },
@@ -331,7 +337,16 @@ const audioLibrary: AudioTrack[] = [
     { id: '010', singer: '王子健', title: '循迹', src: '/musics/循迹.mp3' },
     { id: '011', singer: 'Teddy Swims', title: 'Lose Control', src: '/musics/Lose Control.mp3' },
     { id: '012', singer: '5 Seconds of Summer', title: 'Teeth', src: '/musics/Teeth.mp3' },
-    { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3', pure_music: false }
+    { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3', pure_music: false },
+    // ---古风---
+    { id: '101', singer: '邓寓君(等什么君)', title: '关山酒(DJ)', src: '/musics/关山酒(DJ).mp3' },
+    { id: '102', singer: '平身不晚', title: '难却(DJ)', src: '/musics/难却(DJ).mp3' },
+    { id: '103', singer: '邓寓君(等什么君)', title: '辞九门回忆(DJ)', src: '/musics/辞九门回忆(DJ).mp3' },
+    { id: '104', singer: '奇然/沈谧仁', title: '琵琶行(DJ)', src: '/musics/琵琶行(DJ).mp3' },
+    { id: '105', singer: '指尖笑', title: '鸳鸯戏(DJ)', src: '/musics/鸳鸯戏(DJ).mp3' },
+    { id: '106', singer: '石头、张晓棠', title: '弱水三千(DJ)', src: '/musics/弱水三千(DJ).mp3' },
+    { id: '107', singer: '平生不晚', title: '探故知(DJ)', src: '/musics/探故知(DJ).mp3' },
+    { id: '108', singer: '邓寓君(等什么君)', title: '青丝(DJ)', src: '/musics/青丝(DJ).mp3' },
 ]
 
 // 路由参数处理 -------------------------------------------

@@ -1,20 +1,32 @@
 <template>
-    <el-card class="card" @click="Default_music">
-        <template #header>
-            <h2>音乐</h2>
-        </template>
-        <p>默认音乐区</p>
-        <template #footer>
-            <el-link @click.stop="dialogVisible = true" type="primary">没有你想听的歌？点击反馈</el-link>
-        </template>
-    </el-card>
+    <div class="card-container">
+        <el-card class="card" @click="Default_music">
+            <template #header>
+                <h2>音乐</h2>
+            </template>
+            <p>默认音乐区</p>
+            <template #footer>
+                <el-link @click.stop="dialogVisible = true" type="primary">没有你想听的歌？点击反馈</el-link>
+            </template>
+        </el-card>
+
+        <el-card class="card" @click="Antiquities_music">
+            <template #header>
+                <h2>古风</h2>
+            </template>
+            <p>古风音乐区</p>
+            <template #footer>
+                <el-link @click.stop="dialogVisible = true" type="primary">没有你想听的歌？点击反馈</el-link>
+            </template>
+        </el-card>
+    </div>
 
     <router-view />
-    <el-dialog class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" width="500" :before-close="handleClose">
+    <el-dialog width=80% class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" :before-close="handleClose">
         <p>姓名：</p>
-        <el-input class="input" v-model="name" placeholder="你的姓名/可填学号"></el-input>
+        <el-input v-model="name" placeholder="你的姓名/可填学号"></el-input>
         <p>歌名：</p>
-        <el-input class="input" v-model="songName" placeholder="你希望添加的歌名"></el-input>
+        <el-input v-model="songName" placeholder="你希望添加的歌名"></el-input>
         <p>歌单：</p>
         <el-cascader v-model="value" :options="options" @change="handleChange" placeholder="请选择歌单" />
         <template #footer>
@@ -30,8 +42,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import router from '../../router';
+
+const Antiquities_music = () => {
+    ElMessage.success('进入古风音乐区');
+    router.push('/music/antiquities')
+};
 
 const Default_music = () => {
     ElMessage.success('进入默认音乐区');
@@ -89,14 +106,21 @@ const confirm = () => {
 </script>
 
 <style scoped>
+.card-container {
+    display: flex; /* 使用 flex 布局 */
+    flex-wrap: wrap; /* 允许换行 */
+    gap: 20px; /* 卡片之间的间距 */
+    margin: 20px; /* 父容器的外边距 */
+}
+
 .card {
-    width: 30%;
-    margin: 20px;
+    width: 30%; /* 卡片宽度 */
     cursor: pointer;
 }
+
 @media (max-width: 768px) {
     .card {
-        width: 50%;
+        width: 100%; /* 移动端卡片占满宽度 */
     }
 
     /* 修改为 Element Plus 的类名 */
