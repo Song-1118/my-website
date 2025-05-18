@@ -22,11 +22,11 @@
     </div>
 
     <router-view />
-    <el-dialog width=80% class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" :before-close="handleClose">
+    <el-dialog center width=80% class="dialog" v-model="dialogVisible" title="极光栈音乐反馈" :before-close="handleClose">
         <p>姓名：</p>
-        <el-input v-model="name" placeholder="你的姓名/可填学号"></el-input>
+        <el-input v-model="name" placeholder="你的姓名/可填学号" />
         <p>歌名：</p>
-        <el-input v-model="songName" placeholder="你希望添加的歌名"></el-input>
+        <el-input v-model="songName" placeholder="你希望添加的歌名" />
         <p>歌单：</p>
         <el-cascader v-model="value" :options="options" @change="handleChange" placeholder="请选择歌单" />
         <template #footer>
@@ -73,6 +73,10 @@ const options = [
     {
         value: '默认',
         label: '默认',
+    },
+    {
+        value: '古风',
+        label: '古风',
     },
 ]
 
@@ -121,11 +125,6 @@ const confirm = () => {
 @media (max-width: 768px) {
     .card {
         width: 100%; /* 移动端卡片占满宽度 */
-    }
-
-    /* 修改为 Element Plus 的类名 */
-    .el-dialog {
-        width: 50% !important; /* 更适合移动端 */
     }
 
     .input {

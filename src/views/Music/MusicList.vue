@@ -47,11 +47,11 @@ const musicList = ref<MusicItem[]>([
 ])
 
 const goToPlayer = (music: MusicItem) => {
-  // router.push({
-  //   path: '/player',
-  //   query: { src: music.src, name: music.name }
-  // })
-  router.push(`/player2?track=${music.id}`)
+  router.push({
+    path: '/player',
+    query: { src: music.src, name: music.name }
+  })
+  // router.push(`/player2?track=${music.id}`)
 }
 </script>
 

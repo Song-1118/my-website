@@ -1,4 +1,14 @@
 <template>
+  <div class="div">
+    <el-breadcrumb class="breadcrumb" separator="/">
+      <el-breadcrumb-item :to="{ path: '/music' }">音乐</el-breadcrumb-item>
+      <el-breadcrumb-item>
+        <a :href="listPath">{{ currentTrack?.list }}</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item>{{ currentTrack?.name }}</el-breadcrumb-item>
+    </el-breadcrumb>
+  </div>
+
   <div class="player-container">
     <el-card class="audio-player">
       <!-- 使用 header 插槽放置标题 -->
@@ -45,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
 
@@ -54,6 +64,7 @@ interface Track {
   name: string
   src: string
   id: string
+  list: string
 }
 
 // 路由相关 -----------------------------------------------
@@ -67,26 +78,42 @@ const isBuffering = ref(false)
 
 // 静态数据 -----------------------------------------------
 const tracks: Track[] = [
-  { id: '001', name: '苟活.mp3', src: './musics/苟活.mp3' },
-  { id: '002', name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3' },
-  { id: '003', name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3' },
-  { id: '004', name: '此去半生.mp3', src: './musics/此去半生.mp3' },
-  { id: '005', name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3' },
-  { id: '006', name: '青花瓷.mp3', src: './musics/青花瓷.mp3' },
-  { id: '007', name: '耍把戏.mp3', src: './musics/耍把戏.mp3' },
-  { id: '008', name: '踏山河.mp3', src: './musics/踏山河.mp3' },
-  { id: '009', name: '跳楼机.mp3', src: './musics/跳楼机.mp3' },
-  { id: '010', name: '循迹.mp3', src: './musics/循迹.mp3' },
-  { id: '011', name: 'Lose Control.mp3', src: './musics/Lose Control.mp3' },
-  { id: '012', name: 'Teeth.mp3', src: './musics/Teeth.mp3' },
-  { id: '013', name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3' }
+  { id: '001', name: '苟活.mp3', src: './musics/苟活.mp3', list: '默认' },
+  { id: '002', name: '苟活之重生.mp3', src: './musics/苟活之重生.mp3', list: '默认' },
+  { id: '003', name: '八方来财(DJ版).mp3', src: './musics/八方来财(DJ版).mp3', list: '默认' },
+  { id: '004', name: '此去半生.mp3', src: './musics/此去半生.mp3', list: '默认' },
+  { id: '005', name: '琵琶行(0.75X抒情版).mp3', src: './musics/琵琶行(0.75X抒情版).mp3', list: '默认' },
+  { id: '006', name: '青花瓷.mp3', src: './musics/青花瓷.mp3', list: '默认' },
+  { id: '007', name: '耍把戏.mp3', src: './musics/耍把戏.mp3', list: '默认' },
+  { id: '008', name: '踏山河.mp3', src: './musics/踏山河.mp3', list: '默认' },
+  { id: '009', name: '跳楼机.mp3', src: './musics/跳楼机.mp3', list: '默认' },
+  { id: '010', name: '循迹.mp3', src: './musics/循迹.mp3', list: '默认' },
+  { id: '011', name: 'Lose Control.mp3', src: './musics/Lose Control.mp3', list: '默认' },
+  { id: '012', name: 'Teeth.mp3', src: './musics/Teeth.mp3', list: '默认' },
+  { id: '013', name: 'Wake(58秒Studio片段).mp3', src: './musics/Wake(58秒Studio片段).mp3', list: '默认' },
+  // ---
+  { id: '101', name: '关山酒(DJ)', src: './musics/关山酒(DJ).mp3', list: '古风' },
+  { id: '102', name: '难却(DJ)', src: './musics/难却(DJ).mp3', list: '古风' },
+  { id: '103', name: '辞九门回忆(DJ)', src: './musics/辞九门回忆(DJ).mp3', list: '古风' },
+  { id: '104', name: '琵琶行(DJ)', src: './musics/琵琶行(DJ).mp3', list: '古风' },
+  { id: '105', name: '鸳鸯戏(DJ)', src: './musics/鸳鸯戏(DJ).mp3', list: '古风' },
+  { id: '106', name: '弱水三千(DJ)', src: './musics/弱水三千(DJ).mp3', list: '古风' },
+  { id: '107', name: '探故知(DJ)', src: './musics/探故知(DJ).mp3', list: '古风' },
+  { id: '108', name: '青丝(DJ)', src: './musics/青丝(DJ).mp3', list: '古风' },
 ]
 
 // 生命周期钩子 -------------------------------------------
 onMounted(() => {
-  showStartupPrompt()
+  // showStartupPrompt()
   initializeTrack()
+  showWarning()
 })
+
+const listPath = computed(() => {
+  if (currentTrack.value?.list === '古风') return '/music/antiquities';
+  if (currentTrack.value?.list === '默认') return '/music/default';
+  return '/music'; // 默认路径
+});
 
 // 初始化逻辑 ---------------------------------------------
 const initializeTrack = () => {
@@ -199,6 +226,16 @@ const showStartupPrompt = () => {
     position: 'bottom-right',
   })
 }
+const showWarning = () => {
+  ElNotification({
+    title: '播放提示',
+    message: '此播放器版本过旧，建议使用新版播放器播放。',
+    type: 'warning',
+    duration: 4000,
+    position: 'bottom-right',
+  })
+
+}
 </script>
 
 <style scoped>
@@ -280,5 +317,10 @@ const showStartupPrompt = () => {
   .mobile-controls {
     display: none;
   }
+}
+
+.breadcrumb {
+  font-size: 20px;
+  margin: 10px;
 }
 </style>

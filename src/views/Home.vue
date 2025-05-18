@@ -1,5 +1,5 @@
 <template>
-  <el-alert title="极光栈V1.5.5版本" type="success" />
+  <el-alert class="version" show-icon title="极光栈V1.5.6版本" type="success" />
   <div class="home-container">
     <div class="content animated fadeInUp">
       <h1 class="title">极光栈</h1>
@@ -50,4 +50,8 @@
   }
 }
 
+.version {
+  margin: 0 auto;
+  max-width: 95%;
+}
 </style>

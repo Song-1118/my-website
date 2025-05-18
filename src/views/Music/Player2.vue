@@ -1,4 +1,14 @@
 <template>
+    <el-card class="breadcrumb-card" style="max-width: 480px">
+        <el-breadcrumb shadow="always" class="breadcrumb" separator="/">
+      <el-breadcrumb-item :to="{ path: '/music' }">音乐</el-breadcrumb-item>
+      <el-breadcrumb-item>
+        <a :href="listPath">{{ currentTrack?.list || "默认" }}</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item>{{ currentTrack?.title }}</el-breadcrumb-item>
+    </el-breadcrumb>
+    </el-card>
+
     <div class="audio-player">
         <!-- 歌曲信息 -->
         <div class="song-info">
@@ -115,6 +125,12 @@ function parseLRC(text: string): { time: number; text: string }[] {
 
     return parsed;
 }
+
+const listPath = computed(() => {
+  if (currentTrack.value?.list === '古风') return '/music/antiquities';
+  if (currentTrack.value?.list === '默认' || currentTrack.value?.list === '') return '/music/default';
+  return '/music'; // 默认路径
+});
 
 // 下载当前曲目
 function downloadTrack() {
@@ -316,6 +332,7 @@ interface AudioTrack {
     singer: string
     duration?: number
     pure_music?: boolean
+    list ?: string
 }
 
 // 响应式状态 ---------------------------------------------
@@ -339,14 +356,14 @@ const audioLibrary: AudioTrack[] = [
     { id: '012', singer: '5 Seconds of Summer', title: 'Teeth', src: '/musics/Teeth.mp3' },
     { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3', pure_music: false },
     // ---古风---
-    { id: '101', singer: '邓寓君(等什么君)', title: '关山酒(DJ)', src: '/musics/关山酒(DJ).mp3' },
-    { id: '102', singer: '平身不晚', title: '难却(DJ)', src: '/musics/难却(DJ).mp3' },
-    { id: '103', singer: '邓寓君(等什么君)', title: '辞九门回忆(DJ)', src: '/musics/辞九门回忆(DJ).mp3' },
-    { id: '104', singer: '奇然/沈谧仁', title: '琵琶行(DJ)', src: '/musics/琵琶行(DJ).mp3' },
-    { id: '105', singer: '指尖笑', title: '鸳鸯戏(DJ)', src: '/musics/鸳鸯戏(DJ).mp3' },
-    { id: '106', singer: '石头、张晓棠', title: '弱水三千(DJ)', src: '/musics/弱水三千(DJ).mp3' },
-    { id: '107', singer: '平生不晚', title: '探故知(DJ)', src: '/musics/探故知(DJ).mp3' },
-    { id: '108', singer: '邓寓君(等什么君)', title: '青丝(DJ)', src: '/musics/青丝(DJ).mp3' },
+    { id: '101', singer: '邓寓君(等什么君)', title: '关山酒(DJ)', src: '/musics/关山酒(DJ).mp3', list: "古风" },
+    { id: '102', singer: '平身不晚', title: '难却(DJ)', src: '/musics/难却(DJ).mp3', list: "古风" },
+    { id: '103', singer: '邓寓君(等什么君)', title: '辞九门回忆(DJ)', src: '/musics/辞九门回忆(DJ).mp3', list: "古风" },
+    { id: '104', singer: '奇然/沈谧仁', title: '琵琶行(DJ)', src: '/musics/琵琶行(DJ).mp3', list: "古风" },
+    { id: '105', singer: '指尖笑', title: '鸳鸯戏(DJ)', src: '/musics/鸳鸯戏(DJ).mp3', list: "古风" },
+    { id: '106', singer: '石头、张晓棠', title: '弱水三千(DJ)', src: '/musics/弱水三千(DJ).mp3', list: "古风" },
+    { id: '107', singer: '平生不晚', title: '探故知(DJ)', src: '/musics/探故知(DJ).mp3', list: "古风" },
+    { id: '108', singer: '邓寓君(等什么君)', title: '青丝(DJ)', src: '/musics/青丝(DJ).mp3', list: "古风" },
 ]
 
 // 路由参数处理 -------------------------------------------
@@ -628,5 +645,14 @@ const clearQueue = () => {
 
 .controls .el-icon:hover {
     color: #66b1ff;
+}
+
+.breadcrumb-card {
+    margin: 20px;
+    opacity: 0.8;
+}
+
+.breadcrumb {
+    font-size: 20px;
 }
 </style>
