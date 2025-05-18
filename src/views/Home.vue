@@ -1,6 +1,4 @@
 <template>
-  <!-- <el-alert class="version" show-icon title="极光栈V1.5.6版本 --- 修复歌词偏移问题" type="success" /> -->
-  
   <div class="home-container">
     <div class="content animated fadeInUp">
       <h1 class="title">极光栈</h1>
@@ -10,11 +8,15 @@
 </template>
 
 <script setup>
-  import { ElNotification } from 'element-plus';
+import { ElNotification } from 'element-plus';
 
-  const version = 'V1.5.7'
-  const update = '全面取消旧版播放器'
-  const showNotification = () => {
+const version = 'V1.5.7';
+const update = '全面取消旧版播放器';
+
+const showNotification = () => {
+  // 检查是否已经显示过通知
+  const hasShownNotification = localStorage.getItem('hasShownNotification');
+  if (!hasShownNotification) {
     ElNotification({
       title: version,
       message: update,
@@ -22,9 +24,12 @@
       duration: 5000,
       position: 'bottom-right',
     });
+    // 设置标志位，表示通知已经显示过
+    localStorage.setItem('hasShownNotification', 'true');
   }
-  
-  showNotification()
+};
+
+showNotification();
 </script>
 
 <style scoped>
