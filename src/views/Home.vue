@@ -1,4 +1,5 @@
 <template>
+  <el-alert title="极光栈V1.5.5版本" type="success" />
   <div class="home-container">
     <div class="content animated fadeInUp">
       <h1 class="title">极光栈</h1>

@@ -84,7 +84,7 @@ const duration = ref(0)
 const volume = ref(0.8)
 const isMuted = ref(false)
 const lastVolume = ref(0.8)
-const isIOS = /iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
 // 歌词相关状态
 const lyrics = ref<{ time: number; text: string }[]>([])
 const currentLyricIndex = ref<number>(0)
@@ -94,7 +94,7 @@ let lastScrollIndex = -1
 
 const isComputer = computed(() => {
     const userAgent = navigator.userAgent;
-    return !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    return !/Android|webOS|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
 });
 
 // 解析 LRC 歌词
