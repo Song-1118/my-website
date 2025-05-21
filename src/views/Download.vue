@@ -111,7 +111,7 @@ const downloads = ref([
         description: 'NodeJs+Vscode软件安装包，安装包适用于Windows',
         buttonText: '下载',
         versions: {
-            Windows: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/前端开发包.zip'
+            win32: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/package_A.zip'
         },
         icon: '/AuroraHub.svg'
     },
@@ -120,7 +120,7 @@ const downloads = ref([
         description: 'Python3.11+Vsocde+Jre8+Jdk17软件安装包，安装包适用于Windows',
         buttonText: '下载',
         versions: {
-            Windows: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/后端开发包.zip'
+            win32: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/package_B.zip'
         },
         icon: '/AuroraHub.svg'
     },
