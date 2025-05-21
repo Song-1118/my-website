@@ -53,6 +53,7 @@ const updates = [
   { "version": "V1.5.10", "text": "修复一些已知问题" },
   { "version": "V1.5.11", "text": "修复更新提示问题" },
   { "version": "V1.5.12", "text": "更换了【青丝(DJ)】的歌曲及其歌词" },
+  { "version": "#20250521", "text": "添加歌曲【虞兮叹(DJ)】" },
 ]
 
 const showNotification = () => {
