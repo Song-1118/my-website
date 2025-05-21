@@ -27,8 +27,7 @@
     <!-- 版本选择弹窗 -->
     <el-dialog v-model="dialogVisible" title="选择版本" :width="isMobile ? '30%' : '30%'">
         <el-radio-group v-model="selectedVersion">
-            <el-radio v-for="(url, version) in currentVersions" :key="version" :label="version">{{
-                formatVersionName(version) }}</el-radio>
+            <el-radio v-for="(url, version) in currentVersions" :key="version" :label="version">{{ formatVersionName(version) }}</el-radio>
         </el-radio-group>
         <template #footer>
             <el-button @click="dialogVisible = false">取消</el-button>
@@ -106,6 +105,33 @@ const downloads = ref([
             Macos: 'https://github.com/Song-1118/my-website/releases/download/V1.4.9/QQ_macOS.dmg'
         },
         icon: '/icons/qq.png'
+    },
+    {
+        title: '前端开发包',
+        description: 'NodeJs+Vscode软件安装包，安装包适用于Windows',
+        buttonText: '下载',
+        versions: {
+            Windows: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/前端开发包.zip'
+        },
+        icon: '/AuroraHub.svg'
+    },
+    {
+        title: '后端开发包',
+        description: 'Python3.11+Vsocde+Jre8+Jdk17软件安装包，安装包适用于Windows',
+        buttonText: '下载',
+        versions: {
+            Windows: 'https://github.com/Song-1118/my-website/releases/download/V1.5.8/后端开发包.zip'
+        },
+        icon: '/AuroraHub.svg'
+    },
+    {
+        title: 'Chrome浏览器',
+        description: '又名谷歌浏览器，前端调试必备浏览器',
+        buttonText: '下载',
+        versions: {
+            win32: '/downloads/ChromeSetup.exe'
+        },
+        icon: '/icons/chrome.svg'
     }
 ]);
 
@@ -133,15 +159,19 @@ const handleDownload = (url) => {
 .card {
     box-sizing: border-box;
     min-width: 250px;
-    height: auto;
+    min-height: 300px; /* 设置最小高度 */
     margin-top: 20px;
     animation: fadeInUp 0.5s ease forwards;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 确保内容在卡片内均匀分布 */
 }
 
 .card-description {
     word-break: break-word;
     white-space: normal;
     margin: 10px 0;
+    flex-grow: 1; /* 让描述部分占据剩余空间 */
 }
 
 .card-header {
