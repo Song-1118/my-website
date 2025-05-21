@@ -52,6 +52,7 @@ const updates = [
   { "version": "V1.5.9", "text": "下载界面新增【前端开发包】【后端开发包】和【谷歌浏览器】" },
   { "version": "V1.5.10", "text": "修复一些已知问题" },
   { "version": "V1.5.11", "text": "修复更新提示问题" },
+  { "version": "V1.5.12", "text": "更换了【青丝(DJ)】的歌曲及其歌词" },
 ]
 
 const showNotification = () => {
