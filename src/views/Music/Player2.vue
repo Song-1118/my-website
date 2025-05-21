@@ -364,7 +364,7 @@ const audioLibrary: AudioTrack[] = [
     { id: '106', singer: '石头、张晓棠', title: '弱水三千(DJ)', src: '/musics/弱水三千(DJ).mp3', list: "古风" },
     { id: '107', singer: '平生不晚', title: '探故知(DJ)', src: '/musics/探故知(DJ).mp3', list: "古风" },
     { id: '108', singer: '邓寓君(等什么君)', title: '青丝(DJ)', src: '/musics/青丝(DJ).mp3', list: "古风" },
-    { id: '108', singer: '闻人听書_', title: '虞兮叹(DJ)', src: '/musics/虞兮叹(DJ).mp3', list: "古风" },
+    { id: '109', singer: '闻人听書_', title: '虞兮叹(DJ)', src: '/musics/虞兮叹(DJ).mp3', list: "古风" },
 ]
 
 // 路由参数处理 -------------------------------------------
