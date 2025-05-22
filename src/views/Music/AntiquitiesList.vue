@@ -52,6 +52,7 @@ const antiquitiesList = ref<MusicItem[]>([
   { id: '107', name: '探故知(DJ)', src: './musics/探故知(DJ).mp3' },
   { id: '108', name: '青丝(DJ)', src: './musics/青丝(DJ).mp3' },
   { id: '109', name: '虞兮叹(DJ)', src: './musics/虞兮叹(DJ).mp3' },
+  { id: '110', name: '忘川彼岸(DJ)', src: './musics/忘川彼岸(DJ).mp3' },
 ])
 
 const goToPlayer = (music: MusicItem) => {
