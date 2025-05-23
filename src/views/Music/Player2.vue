@@ -1,19 +1,28 @@
 <template>
     <el-card class="breadcrumb-card" style="max-width: 480px">
         <el-breadcrumb shadow="always" class="breadcrumb" separator="/">
-      <el-breadcrumb-item :to="{ path: '/music' }">音乐</el-breadcrumb-item>
-      <el-breadcrumb-item>
-        <a :href="listPath">{{ currentTrack?.list || "默认" }}</a>
-      </el-breadcrumb-item>
-      <el-breadcrumb-item>{{ currentTrack?.title }}</el-breadcrumb-item>
-    </el-breadcrumb>
+            <el-breadcrumb-item :to="{ path: '/music' }">音乐</el-breadcrumb-item>
+            <el-breadcrumb-item>
+                <a :href="listPath">{{ currentTrack?.list || "默认" }}</a>
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>{{ currentTrack?.title }}</el-breadcrumb-item>
+        </el-breadcrumb>
     </el-card>
 
     <div class="audio-player">
         <!-- 歌曲信息 -->
         <div class="song-info">
-            <h3 class="title">{{ currentSong.title }}</h3>
-            <p class="artist">{{ currentSong.artist }}</p>
+            <div class="text-container">
+                <h3 class="title">{{ currentSong.title }}</h3>
+                <p class="artist">{{ currentSong.artist }}</p>
+            </div>
+
+            <!-- 下载按钮 -->
+            <el-tooltip class="box-item" effect="dark" content="点击下载" placement="top-start">
+                <el-icon :size="24" @click="downloadTrack" class="download-icon">
+                    <Download />
+                </el-icon>
+            </el-tooltip>
         </div>
 
         <!-- 自定义进度条 -->
@@ -61,11 +70,6 @@
                 <el-slider v-if="!isIOS" v-model="volume" :min="0" :max="1" :step="0.05" :format-tooltip="formatVolume"
                     @input="updateVolume" />
             </div>
-
-            <!-- 下载按钮 -->
-            <el-icon v-if="isComputer" :size="24" @click="downloadTrack" style="margin-left: 20px;">
-                <Download />
-            </el-icon>
         </div>
 
         <!-- 隐藏的音频元素 -->
@@ -127,9 +131,9 @@ function parseLRC(text: string): { time: number; text: string }[] {
 }
 
 const listPath = computed(() => {
-  if (currentTrack.value?.list === '古风') return '/music/antiquities';
-  if (currentTrack.value?.list === '默认' || currentTrack.value?.list === '') return '/music/default';
-  return '/music'; // 默认路径
+    if (currentTrack.value?.list === '古风') return '/music/antiquities';
+    if (currentTrack.value?.list === '默认' || currentTrack.value?.list === '') return '/music/default';
+    return '/music'; // 默认路径
 });
 
 // 下载当前曲目
@@ -332,7 +336,7 @@ interface AudioTrack {
     singer: string
     duration?: number
     pure_music?: boolean
-    list ?: string
+    list?: string
 }
 
 // 响应式状态 ---------------------------------------------
@@ -656,5 +660,44 @@ const clearQueue = () => {
 
 .breadcrumb {
     font-size: 15px;
+}
+
+.download-button {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.download-button .el-icon {
+    margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .download-button {
+        justify-content: center;
+    }
+}
+
+.song-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.download-icon {
+    cursor: pointer;
+    color: #409eff;
+    transition: color 0.3s ease;
+}
+
+.download-icon:hover {
+    color: #66b1ff;
 }
 </style>
