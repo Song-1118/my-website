@@ -1,17 +1,28 @@
 <template>
-  <div class="home-container">
-    <div class="content animated fadeInUp">
-      <h1 class="title">极光栈</h1>
-      <p class="subtitle">AuroraHub</p>
+  <div class="page-wrapper">
+    <div class="home-container">
+      <div class="content animated fadeInUp">
+        <h1 class="title">极光栈</h1>
+        <p class="subtitle">AuroraHub</p>
+      </div>
     </div>
+    <el-link class="version-link" type="primary" @click="showAllVersion">历史版本</el-link>
+
+    <el-dialog v-model="dialogVisible" title="历史版本" :width="isMobile ? '95%' : '800px'">
+      <el-table height="400" :data="updatesT" style="width: 100%">
+        <el-table-column property="version" label="版本号" min-width="150" />
+        <el-table-column property="text" label="更新内容" min-width="300" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ElNotification } from 'element-plus';
+import { ref, computed, onMounted } from 'vue';
+import { ElMessage, ElNotification } from 'element-plus';
 
-const version = 'V1.5.8';
-const update = '下载板块新增【前端开发包】【后端开发包】和【谷歌浏览器】';
+const dialogVisible = ref(false)
+const isMobile = computed(() => window.innerWidth < 768);
 const updates = [
   { "version": "V1.0.0", "text": "网站初次上线, 域名:https://songweb.dpdns.org" },
   { "version": "V1.0.1", "text": "完善下载界面" },
@@ -55,29 +66,41 @@ const updates = [
   { "version": "V1.5.12", "text": "更换了【青丝(DJ)】的歌曲及其歌词" },
   { "version": "#20250521", "text": "添加歌曲【虞兮叹(DJ)】" },
   { "version": "#20250522", "text": "添加歌曲【忘川彼岸(DJ)】" },
+  { "version": "#20250523", "text": "添加【历史版本】功能" },
 ]
+const version = updates[updates.length - 1].version;
+const update = updates[updates.length - 1].text;
+
+const updatesT = updates.reverse();
 
 const showNotification = () => {
-  const latestUpdate = updates[updates.length - 1];
-  if (!latestUpdate) return;
 
   const currentVersion = localStorage.getItem('lastShownVersion');
   // 如果没有记录过版本 或者 当前版本比上次记录的新
-  if (!currentVersion || currentVersion !== latestUpdate.version) {
+  if (!currentVersion || currentVersion !== version) {
     ElNotification({
-      title: latestUpdate.version,
-      message: latestUpdate.text,
+      title: version,
+      message: update,
       type: 'success',
-      duration: 5000,
+      duration: 10000,
       position: 'bottom-right',
     });
 
     // 更新本地存储中的版本号
-    localStorage.setItem('lastShownVersion', latestUpdate.version);
+    localStorage.setItem('lastShownVersion', version);
   }
 };
 
-showNotification();
+const showAllVersion = () => {
+  ElMessage.info('历史版本加载中...')
+  dialogVisible.value = true
+  ElMessage.success('历史版本加载成功')
+}
+onMounted(() => {
+  showNotification();
+  console.log(`当前版本：${version}\n更新内容：${update}`);
+
+});
 </script>
 
 <style scoped>
@@ -122,5 +145,29 @@ showNotification();
 .version {
   margin: 0 auto;
   max-width: 95%;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+.version-link {
+  margin-bottom: 80px;
+}
+
+@media (max-width: 768px) {
+  .version-table {
+    min-width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .version-table {
+    min-width: 500px;
+  }
 }
 </style>
