@@ -4,9 +4,42 @@
       <div class="content animated fadeInUp">
         <h1 class="title">极光栈</h1>
         <p class="subtitle">AuroraHub</p>
+        <h1 class="title2">
+          极光栈的主站，这里有【下载功能】【网站导航】【音乐板块】和自研的【音乐播放器】
+        </h1>
       </div>
     </div>
-    <el-link class="version-link" type="primary" @click="showAllVersion">历史版本</el-link>
+
+    <!-- 将简介和卡牌顺序调整 -->
+    <div class="home-card">
+      <el-card class="card" style="max-width: 480px">
+        <template #header>
+          <div class="card-header">
+            <span>下载</span>
+          </div>
+        </template>
+        <p> 下载板块导航 </p>
+        <el-button @click="download">进入</el-button>
+      </el-card>
+      <el-card class="card" style="max-width: 480px">
+        <template #header>
+          <div class="card-header">
+            <span>网页导航</span>
+          </div>
+        </template>
+        <p> 前往网页导航板块 </p>
+        <el-button @click="web">进入</el-button>
+      </el-card>
+      <el-card class="card" style="max-width: 480px">
+        <template #header>
+          <div class="card-header">
+            <span>音乐</span>
+          </div>
+        </template>
+        <p> 前往古风音乐区 </p>
+        <el-button @click="music">进入</el-button>
+      </el-card>
+    </div>
 
     <el-dialog v-model="dialogVisible" title="历史版本" :width="isMobile ? '95%' : '800px'">
       <el-table height="400" :data="updatesT" style="width: 100%">
@@ -14,13 +47,25 @@
         <el-table-column property="text" label="更新内容" min-width="300" />
       </el-table>
     </el-dialog>
+
+    <el-link class="version-link" type="primary" @click="showAllVersion">历史版本</el-link>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import router from '../router';
 import { ElMessage, ElNotification } from 'element-plus';
 
+const download = () => {
+  router.push('/download')
+}
+const web = () => {
+  router.push('/web')
+}
+const music = () => {
+  router.push('/music/antiquities')
+}
 const dialogVisible = ref(false)
 const isMobile = computed(() => window.innerWidth < 768);
 const updates = [
@@ -69,6 +114,7 @@ const updates = [
   { "version": "#20250523", "text": "添加【历史版本】功能" },
   { "version": "V1.5.13", "text": "修改了播放器中【下载】按钮的位置，时期在手机中也能够正常显示" },
   { "version": "V1.6.0", "text": "【网页】板块新增电子书网站，【音乐】板块新增专区【六一专场(暂未开放）】" },
+  { "version": "V1.6.1", "text": "修改首页样式" },
 ]
 const version = updates[updates.length - 1].version;
 const update = updates[updates.length - 1].text;
@@ -81,7 +127,7 @@ const showNotification = () => {
   // 如果没有记录过版本 或者 当前版本比上次记录的新
   if (!currentVersion || currentVersion !== version) {
     ElNotification({
-      title: version+'更新通知',
+      title: version + '更新通知',
       message: update,
       type: 'success',
       duration: 10000,
@@ -171,5 +217,24 @@ onMounted(() => {
   .version-table {
     min-width: 500px;
   }
+}
+
+.title2 {
+  font-size: 20px;
+}
+
+/* 新增样式：使卡牌横向排列 */
+.home-card {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  /* 卡牌之间的间距 */
+  margin-top: 20px;
+  /* 卡牌与简介之间的间距 */
+}
+
+.card {
+  margin-bottom: 0;
+  /* 移除卡片底部的默认间距 */
 }
 </style>
