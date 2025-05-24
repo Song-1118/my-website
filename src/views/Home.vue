@@ -115,6 +115,7 @@ const updates = [
   { "version": "V1.5.13", "text": "修改了播放器中【下载】按钮的位置，时期在手机中也能够正常显示" },
   { "version": "V1.6.0", "text": "【网页】板块新增电子书网站，【音乐】板块新增专区【六一专场(暂未开放）】" },
   { "version": "V1.6.1", "text": "修改首页样式" },
+  { "version": "V1.6.2", "text": "【古风】音乐区新增【隔岸(DJ)】，【默认】音乐区新增【半壶纱(DJ)】等7首音乐" },
 ]
 const version = updates[updates.length - 1].version;
 const update = updates[updates.length - 1].text;
@@ -147,6 +148,8 @@ const showAllVersion = () => {
 onMounted(() => {
   showNotification();
   console.log(`当前版本：${version}\n更新内容：${update}`);
+  console.log(`当前版本数极光栈第${version.length-1}个版本`);
+  
 
 });
 </script>

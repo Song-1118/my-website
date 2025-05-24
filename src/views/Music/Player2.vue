@@ -376,6 +376,7 @@ const audioLibrary: AudioTrack[] = [
     { id: '108', singer: '邓寓君(等什么君)', title: '青丝(DJ)', src: '/musics/青丝(DJ).mp3', list: "古风" },
     { id: '109', singer: '闻人听書_', title: '虞兮叹(DJ)', src: '/musics/虞兮叹(DJ).mp3', list: "古风" },
     { id: '110', singer: '零一九零贰', title: '忘川彼岸(DJ)', src: '/musics/忘川彼岸(DJ).mp3', list: "古风" },
+    { id: '111', singer: '大辉哥', title: '隔岸(DJ)', src: '/musics/隔岸(DJ).mp3', list: "古风" },
 ]
 
 // 路由参数处理 -------------------------------------------
