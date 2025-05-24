@@ -128,7 +128,7 @@ const showNotification = () => {
   // 如果没有记录过版本 或者 当前版本比上次记录的新
   if (!currentVersion || currentVersion !== version) {
     ElNotification({
-      title: version + '更新通知',
+      title: version + `更新通知(${updates.length - 1})`,
       message: update,
       type: 'success',
       duration: 10000,
@@ -148,7 +148,7 @@ const showAllVersion = () => {
 onMounted(() => {
   showNotification();
   console.log(`当前版本：${version}\n更新内容：${update}`);
-  console.log(`当前版本数极光栈第${version.length-1}个版本`);
+  console.log(`当前版本数极光栈第${updates.length - 1}个版本`);
   
 
 });
