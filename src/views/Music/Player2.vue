@@ -358,6 +358,13 @@ const audioLibrary: AudioTrack[] = [
     { id: '011', singer: 'Teddy Swims', title: 'Lose Control', src: '/musics/Lose Control.mp3' },
     { id: '012', singer: '5 Seconds of Summer', title: 'Teeth', src: '/musics/Teeth.mp3' },
     { id: '013', singer: 'Hillsong Young And Free', title: 'Wake(58秒Studio片段)', src: '/musics/Wake(58秒Studio片段).mp3', pure_music: false },
+    { id: '014', singer: '刘珂矣', title: '半壶纱(DJ)', src: '/musics/半壶纱(DJ).mp3' },
+    { id: '015', singer: '王琦', title: '可可托海的牧羊人', src: '/musics/可可托海的牧羊人.mp3' },
+    { id: '016', singer: '王小宁', title: '你的样子(DJ)', src: '/musics/你的样子(DJ).mp3' },
+    { id: '017', singer: '欣宝儿', title: '我是你的格桑花(DJ)', src: '/musics/我是你的格桑花(DJ).mp3' },
+    { id: '018', singer: '安雯', title: '月满西楼(DJ)', src: '/musics/月满西楼(DJ).mp3' },
+    { id: '019', singer: '梁红', title: '忘情忘你忘最初', src: '/musics/忘情忘你忘最初.mp3' },
+    { id: '020', singer: '萨顶顶', title: '左手指月', src: '/musics/左手指月.mp3' },
     // ---古风---
     { id: '101', singer: '邓寓君(等什么君)', title: '关山酒(DJ)', src: '/musics/关山酒(DJ).mp3', list: "古风" },
     { id: '102', singer: '平身不晚', title: '难却(DJ)', src: '/musics/难却(DJ).mp3', list: "古风" },

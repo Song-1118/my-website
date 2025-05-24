@@ -43,7 +43,16 @@ const musicList = ref<MusicItem[]>([
   { id: '010', name: '循迹', src: './musics/循迹.mp3' },
   { id: '011', name: 'Lose Control', src: './musics/Lose Control.mp3' },
   { id: '012', name: 'Teeth', src: './musics/Teeth.mp3' },
-  { id: '013', name: 'Wake(58秒Studio片段)', src: './musics/Wake(58秒Studio片段).mp3' }
+  { id: '013', name: 'Wake(58秒Studio片段)', src: './musics/Wake(58秒Studio片段).mp3' },
+
+  
+  { id: '014', name: '半壶纱(DJ)', src: './musics/半壶纱(DJ).mp3' },
+  { id: '015', name: '可可托海的牧羊人', src: './musics/可可托海的牧羊人.mp3' },
+  { id: '016', name: '你的样子(DJ)', src: './musics/你的样子(DJ).mp3' },
+  { id: '017', name: '我是你的格桑花(DJ)', src: './musics/我是你的格桑花(DJ).mp3' },
+  { id: '018', name: '月满西楼(DJ)', src: './musics/月满西楼(DJ).mp3' },
+  { id: '019', name: '忘情忘你忘最初', src: './musics/忘情忘你忘最初.mp3' },
+  { id: '020', name: 'Teeth', src: './musics/Teeth.mp3' },
 ])
 
 const goToPlayer = (music: MusicItem) => {
