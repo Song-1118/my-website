@@ -40,6 +40,13 @@ const cards = [
         linkText: 'GitHub',
         isVisible: false
     },
+    {
+        title: '电子版课本(github开源项目)',
+        description: '一个包含99%的电子版课本，可下载。',
+        link: 'https://github.com/TapXWorld/ChinaTextbook',
+        linkText: '访问github',
+        isVisible: false
+    },
 ];
 onMounted(() => {
   cards.forEach((card, index) => {

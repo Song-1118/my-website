@@ -8,6 +8,7 @@ import Default from "../views/Music/Default.vue";
 import Antiquities from "../views/Music/Antiquities.vue";
 import Player from "../views/Music/Player.vue";
 import Player2 from "../views/Music/Player2.vue";
+import Music61 from "../views/Music/Music61.vue";
 
 const routes = [
   {
@@ -39,6 +40,11 @@ const routes = [
     path: '/music/antiquities',
     name: "Antiquities",
     component: Antiquities
+  },
+  {
+    path: "/music/music61",
+    name: "Music61",
+    component: Music61,
   },
   {
     path: "/player",

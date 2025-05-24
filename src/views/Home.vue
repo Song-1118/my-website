@@ -68,6 +68,7 @@ const updates = [
   { "version": "#20250522", "text": "添加歌曲【忘川彼岸(DJ)】" },
   { "version": "#20250523", "text": "添加【历史版本】功能" },
   { "version": "V1.5.13", "text": "修改了播放器中【下载】按钮的位置，时期在手机中也能够正常显示" },
+  { "version": "V1.6.0", "text": "【网页】板块新增电子书网站，【音乐】板块新增专区【六一专场(暂未开放）】" },
 ]
 const version = updates[updates.length - 1].version;
 const update = updates[updates.length - 1].text;
@@ -80,7 +81,7 @@ const showNotification = () => {
   // 如果没有记录过版本 或者 当前版本比上次记录的新
   if (!currentVersion || currentVersion !== version) {
     ElNotification({
-      title: version,
+      title: version+'更新通知',
       message: update,
       type: 'success',
       duration: 10000,

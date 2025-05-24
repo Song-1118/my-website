@@ -82,7 +82,6 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { CaretLeft, CaretRight } from '@element-plus/icons-vue'
 
 // 补充响应式状态
 const currentSong = ref({

@@ -19,6 +19,16 @@
                 <el-link @click.stop="dialogVisible = true" type="primary">没有你想听的歌？点击反馈</el-link>
             </template>
         </el-card>
+
+        <el-card class="card" @click="music_61">
+            <template #header>
+                <h2>六一</h2>
+            </template>
+            <p>六一儿童节专区！(暂未开放)</p>
+            <template #footer>
+                <el-link @click.stop="dialogVisible = true" type="primary">没有你想听的歌？点击反馈</el-link>
+            </template>
+        </el-card>
     </div>
 
     <router-view />
@@ -53,6 +63,13 @@ const Antiquities_music = () => {
 const Default_music = () => {
     ElMessage.success('进入默认音乐区');
     router.push('/music/default')
+};
+
+const music_61 = () => {
+    ElMessage.warning('61板块未开放，暂时展示古风音乐区');
+    router.push('/music/music61')
+    // router.push('/music/antiquities')
+
 };
 const dialogVisible = ref(false)
 
